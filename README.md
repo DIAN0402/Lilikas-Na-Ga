@@ -1,13 +1,9 @@
 # Lilikas Na Ga: Batangas City Hazard Map & Evacuation
 
-Hazard map, evacuation-center capacity, best-route planner, earthquake/storm alerts and an AI-assisted
-citizen report panel, organised as a three-tier app (see [docs/architecture.md](docs/architecture.md)).
+Lilikas Na Ga is a location-based disaster preparedness, early-warning, and evacuation assistance web application designed initially for Batangas City.
 
-```
-presentation/   Tier 1  pages (index, admin, alerts) and assist.js
-application/    Tier 2  Flask API and business rules
-data/           Tier 3  geo/ (hazard maps), layers/ (light map layers), stores/ (JSON the app edits)
-```
+Hazard map, evacuation-center capacity, best-route planner, earthquake/storm alerts and an AI-assisted
+citizen report panel.
 
 ## Run it
 ```bash
