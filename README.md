@@ -16,13 +16,15 @@ Set `ADMIN_KEY` in `.env` to choose your own admin key; otherwise a random one i
 ## Test it
 ```bash
 pip install -r application/requirements.txt -r application/requirements-dev.txt
-cd application && python -m pytest
+cd application
+python app.py
 ```
 Tests need no network and never write to `data/stores/`.
 
 ## Rebuild the light map layers (after changing `data/geo/*`)
 ```bash
-cd application && python build_layers.py
+cd application
+python build_layers.py
 ```
 
 ## Backend modules (`application/`)
