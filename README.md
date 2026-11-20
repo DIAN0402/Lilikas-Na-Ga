@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Lilikas Na Ga: Batangas City Hazard Map & Evacuation
 
 Hazard map, evacuation-center capacity, best-route planner, earthquake/storm alerts and an AI-assisted
@@ -91,4 +90,4 @@ cd application && python build_layers.py
 =======
 # Lilikas-Na-Ga
 Lilikas Na Ga is a location based disaster preparedness, early-warning, and evacuation assistance web application designed initially for Batangas City.
->>>>>>> f62471e7a3ef145b2a44877cf5f1aee1b6188b99
+
