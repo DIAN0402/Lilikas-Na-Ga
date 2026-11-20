@@ -84,6 +84,4 @@ cd application && python build_layers.py
 - Reports are limited to 6 per 10 minutes per IP address. Add stronger abuse protection before a public launch.
 - Hazard results, routes and alerts are planning aids, not official advisories.
 =======
-# Lilikas-Na-Ga
-Lilikas Na Ga is a location based disaster preparedness, early-warning, and evacuation assistance web application designed initially for Batangas City.
 
