@@ -1,0 +1,13 @@
+# secrets
+.env
+
+# python
+__pycache__/
+*.pyc
+.venv/
+
+# runtime state written by the app (may hold personal data)
+data/stores/reports.json
+data/stores/alerts.json
+data/stores/*.tmp
+.pytest_cache/

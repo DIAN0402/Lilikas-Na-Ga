@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alerts for your area · Lilikas Na Ga</title>
+<style>
+:root{--red:#d62b2b;--red-d:#a31d1d;--navy:#0f2747;--ink:#2b3445;--mute:#7a8396;--line:#ecd9d9;--tint:#fbeeee;--bg:#fbf3f3}
+*{box-sizing:border-box}body{margin:0;font-family:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+.app{display:grid;grid-template-columns:230px 1fr;gap:20px;padding:18px;min-height:100vh}
+aside{background:linear-gradient(180deg,#2a0b0b,#120505);color:#f3dcdc;border-radius:22px;padding:18px 14px;display:flex;flex-direction:column;position:sticky;top:18px;height:calc(100vh - 36px)}
+.brand{display:flex;gap:10px;align-items:center;font-weight:700;padding:4px 6px 16px;border-bottom:1px solid #ffffff1a}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--red);display:grid;place-items:center}
+nav{margin-top:14px;display:grid;gap:4px}nav a{padding:10px 12px;border-radius:10px;color:#d9bcbc;font-size:13px;text-decoration:none}
+nav a.on{background:linear-gradient(90deg,#8d2020,#4a1111);color:#fff;border:1px solid #ffffff22}
+.city{margin-top:14px;padding:11px 12px;border:1px solid #ffffff1a;border-radius:10px;font-size:13px}
+.help{margin-top:auto;font-size:12px;color:#d9bcbc}.help b{display:block;color:#fff;margin-bottom:2px}
+.help button{margin-top:10px;width:100%;padding:11px;border:0;border-radius:10px;background:var(--red);color:#fff;font-weight:700;cursor:pointer}
+main{max-width:1020px;width:100%}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-top:8px}
+h1{font-size:32px;color:var(--navy);margin:0 0 4px;border-left:3px solid var(--red);padding-left:10px}.sub{font-family:Georgia,serif;color:var(--mute);margin:0 0 16px;font-size:14px;padding-left:13px}
+.btn{border:1.5px solid var(--red);background:#fff;color:var(--red-d);border-radius:10px;padding:9px 16px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.btn.pri{background:var(--red);color:#fff}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}.chip{border:1.5px solid var(--red);background:#fff;color:var(--red-d);border-radius:10px;padding:7px 14px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}.chip.on{background:var(--red);color:#fff}
+.grid{display:grid;grid-template-columns:330px 1fr;gap:16px;align-items:start}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 14px #7a1f1f14}.pad{padding:16px}
+.list{display:grid;gap:12px}.item{cursor:pointer;border:2px solid transparent;padding:14px 16px}.item.sel{border-color:var(--red)}.item.exp{opacity:.62}
+.badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 9px;border-radius:999px;background:#fde4e4;color:#b01c1c;margin-right:4px}
+.badge.adv{background:#fff3d6;color:#9a6200}.badge.exp{background:#eceef2;color:#59627a}.badge.smp{background:#e8eefc;color:#2b4a9a}
+.name{display:inline-block;background:#f9cfcf;color:var(--navy);font-size:17px;font-weight:800;padding:2px 8px;border-radius:6px;margin:10px 0 6px}
+.meta{font-size:12px;color:var(--mute);margin:3px 0}.foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #f4e8e8;margin-top:12px;padding-top:10px;font-size:11px;color:var(--mute)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--red)}
+.d-title{font-size:30px;color:var(--navy);margin:14px 0 8px}.d-sum{font-family:Georgia,serif;color:var(--mute);font-size:14px;line-height:1.5;margin:0 0 16px}
+.info{background:var(--tint);border:1px solid var(--line);border-radius:12px;padding:6px 14px;margin-bottom:18px}
+.row{display:grid;grid-template-columns:110px 1fr;gap:8px;font-size:12px;padding:8px 0;border-top:1px solid #f1e0e0}.row:first-child{border-top:0}.row span:first-child{color:var(--mute)}.row span:last-child{color:var(--navy);font-weight:700}
+h3.sec{display:inline-block;background:#f9cfcf;color:var(--navy);font-size:14px;padding:2px 8px;border-radius:6px;margin:0 0 12px;border-left:3px solid var(--red)}
+.step{display:flex;gap:12px;align-items:flex-start;background:var(--tint);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.num{flex:none;width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center}
+.step b{display:block;font-size:13px;color:var(--navy)}.step span{font-size:12px;color:var(--mute)}
+.note{background:#fde8e8;border:1px solid #f4cccc;color:#8a2a2a;border-radius:10px;padding:10px 12px;font-size:12px;margin:14px 0}
+.panel{display:none;background:var(--tint);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.55;margin-top:14px}.panel.open{display:block}.panel ul{margin:6px 0 8px;padding-left:18px}
+.notif{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:20px}
+.pillo{display:inline-block;font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;background:#eceef2;color:#59627a;margin-left:8px}.pillo.on{background:#e3f5ea;color:#1b7a4b}
+.empty{padding:22px;text-align:center;color:var(--mute);font-size:14px}.warnb{background:#fff3d6;border:1px solid #f0d9a0;color:#7a5200;border-radius:10px;padding:9px 12px;font-size:12px;margin-bottom:10px}.disc{font-size:12px;color:var(--mute);margin:22px 0 8px}
+@media(max-width:900px){.app{grid-template-columns:1fr}aside{display:none}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="brand"><div class="logo">≈</div>Lilikas Na Ga</div>
+  <nav><a href="#">Overview</a><a href="/">Hazard map &amp; evacuation</a><a class="on" href="/alerts">Alerts</a><a href="#">Preparedness &amp; help</a><a href="#" data-assist-open>✦ Lilikas Assist <span class="la-ai">AI</span></a></nav>
+  <div class="city">📍 Batangas City</div>
+  <div class="help"><b>Need urgent help?</b>For emergencies, call 911.<button>Emergency contacts</button></div>
+</aside>
+<main>
+  <div class="head"><div><h1>Alerts for your area</h1><p class="sub">Understand the message, the source and what to do next.</p></div>
+    <button class="btn" id="prefs">Notification preferences</button></div>
+  <div id="banner"></div>
+  <div class="chips" id="scope"></div>
+  <div class="chips" id="chips"></div>
+  <div class="grid"><div class="list" id="list"></div><div class="card pad" id="detail"></div></div>
+  <div class="card pad notif" id="notif">
+    <div style="max-width:620px"><span class="name" style="margin:0">Choose whether to receive notifications</span><span class="pillo" id="nstate">OFF</span>
+      <p class="meta" style="margin-top:8px">Optional. We ask for permission first and you can turn it off anytime. Alerts pop up only while this page is open in your browser. Delivery is not guaranteed and does not replace official channels.</p><p class="meta" id="nmsg"></p></div>
+    <button class="btn pri" id="nbtn">Enable notifications</button>
+  </div>
+  <p class="disc">Alerts marked SAMPLE or TEST are for demonstration only. Earthquake alerts come from PHIVOLCS data through an unofficial scraper; storm alerts come from the Bagyo Storms API; rain and local alerts are posted by staff. Not for safety-of-life decisions: follow PAGASA, PHIVOLCS and your local authorities.</p><p class="disc" id="attr"></p>
+</main>
+</div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const seen=new Set(store.get("seen",[])),known=new Set();let scope=store.get("scope","ph"),alerts=[],filter="all",sel=null,first=true;
+const MN={timeZone:"Asia/Manila"},hm=t=>new Date(t).toLocaleTimeString("en-PH",{...MN,hour:"2-digit",minute:"2-digit",hour12:false});
+const day=t=>new Date(t).toLocaleDateString("en-PH",{...MN,day:"numeric",month:"short"});
+const short=t=>(day(t)===day(Date.now())?"":day(t)+", ")+hm(t),full=t=>day(t)+" "+new Date(t).toLocaleDateString("en-PH",{...MN,year:"numeric"})+", "+hm(t)+" PHT";
+const SOURCES={"Japan Meteorological Agency":"Storm position and forecast track from the Japan Meteorological Agency, delivered through the Bagyo Storms API. Not for safety decisions: follow PAGASA.","Joint Typhoon Warning Center":"Storm position and forecast track from the US Joint Typhoon Warning Center, delivered through the Bagyo Storms API. Not for safety decisions: follow PAGASA.","National Hurricane Center":"Storm data from the US National Hurricane Center, delivered through the Bagyo Storms API.",PAGASA:"PAGASA is the Philippines' national weather agency. Official bulletins: pagasa.dost.gov.ph.",PHIVOLCS:"PHIVOLCS is the national agency for earthquakes and volcanoes. Official reports: earthquake.phivolcs.dost.gov.ph. These alerts are read from its website by an unofficial scraper, so check the official page.","Local government":"Posted by Batangas City staff through the admin page. Confirm with your barangay or the City DRRM Office."};
+const PREP=["Pack a go bag: water, food, medicine, flashlight, documents and a charged power bank.","Agree on a meeting place and an evacuation center with your household.","Check your area's flood and landslide risk on the hazard map.","Save emergency numbers. In an emergency, call 911."];
+const FILTERS=[["all","All"],["storm","Storms"],["earthquake","Earthquakes"],["rain_flood","Rain & flood"],["local","Local advice"],["past","Past alerts"]];
+const inScope=a=>scope==="ph"||a.near!==false;
+const shown=()=>alerts.filter(inScope).filter(a=>filter==="all"||(filter==="past"?a.expired:a.category===filter));
+function badge(a){return (a.expired?'<span class="badge exp">EXPIRED</span>':`<span class="badge ${a.level==="high"?"":"adv"}">${esc(a.level_label)}</span>`)+(a.sample?'<span class="badge smp">SAMPLE</span>':"")+(a.test?'<span class="badge smp">TEST</span>':"")}
+function render(){
+  $("#scope").innerHTML=[["ph","Whole Philippines"],["near","Near Batangas City"]].map(([k,l])=>`<button class="chip ${k===scope?"on":""}" data-s="${k}">${l}</button>`).join("");
+  document.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{scope=b.dataset.s;store.set("scope",scope);sel=null;render()});
+  $("#chips").innerHTML=FILTERS.map(([k,l])=>`<button class="chip ${k===filter?"on":""}" data-k="${k}">${l}${k==="all"?" · "+alerts.filter(inScope).length:""}</button>`).join("");
+  document.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{filter=b.dataset.k;sel=null;render()});
+  const list=shown();sel=list.find(a=>sel&&a.id===sel.id)||list[0]||null;
+  $("#list").innerHTML=list.map(a=>`<div class="card item ${sel&&a.id===sel.id?"sel":""} ${a.expired?"exp":""}" data-id="${a.id}">${badge(a)}<br><span class="name">${esc(a.title)}</span>
+    <div class="meta">${esc(a.source)}</div><div class="meta">${esc(a.area)}</div>
+    <div class="foot"><span>Issued ${short(a.issued)} · ${a.expired?"Expired":"Expires"} ${short(a.expires)}</span>${!a.expired&&!seen.has(a.id)?'<i class="dot"></i>':""}</div></div>`).join("")||'<div class="card empty">No alerts to show.</div>';
+  document.querySelectorAll(".item").forEach(el=>el.onclick=()=>{sel=alerts.find(a=>a.id===el.dataset.id);if(!sel)return;seen.add(sel.id);store.set("seen",[...seen]);render()});
+  detail()}
+function detail(){const a=sel,box=$("#detail");
+  if(!a){box.innerHTML='<div class="empty">Select an alert to read it.</div>';return}
+  const order=alerts.some(x=>!x.expired&&x.evac_order);
+  box.innerHTML=`${badge(a)}<h2 class="d-title">${esc(a.title)}</h2><p class="d-sum">${esc(a.summary)}</p>
+  <div class="info"><div class="row"><span>Source</span><span>${esc(a.source)}</span></div><div class="row"><span>Affected area</span><span>${esc(a.area)}</span></div>
+  ${a.category==="storm"?`<div class="row"><span>Distance now</span><span>about ${a.distance_km} km</span></div><div class="row"><span>Closest forecast</span><span>about ${a.closest_km} km</span></div>`:""}
+  <div class="row"><span>Issued</span><span>${full(a.issued)}</span></div><div class="row"><span>${a.expired?"Expired":"Expires"}</span><span>${full(a.expires)}</span></div></div>
+  ${a.steps.length?'<h3 class="sec">What to do</h3>'+a.steps.map((s,i)=>`<div class="step"><span class="num">${i+1}</span><div><b>${esc(s.title)}</b><span>${esc(s.text)}</span></div></div>`).join(""):""}
+  <div class="note">ⓘ ${order?"An evacuation order has been posted. Follow your local authorities.":"No evacuation order has been posted in this system. Always follow your local authorities."}</div>
+  <button class="btn pri" id="bprep">Review preparedness steps</button> <button class="btn" id="bsrc">About this source</button>${a.advisory_url?` <a class="btn" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="${esc(a.advisory_url)}">Official advisory ↗</a>`:""}
+  <div class="panel" id="pprep"><b>Preparedness steps</b><ul>${PREP.map(p=>"<li>"+p+"</li>").join("")}</ul><a href="/" style="color:var(--red-d);font-weight:700">Find evacuation centers on the map</a></div>
+  <div class="panel" id="psrc">${esc(SOURCES[a.source]||"Source: "+a.source+". Confirm with official channels.")}</div>`;
+  $("#bprep").onclick=()=>$("#pprep").classList.toggle("open");$("#bsrc").onclick=()=>$("#psrc").classList.toggle("open")}
+// notifications (browser pop-ups, only while this page is open)
+const canNotify=()=>"Notification" in window;
+function nui(){const on=store.get("notify",false)&&canNotify()&&Notification.permission==="granted";
+  $("#nstate").textContent=on?"ON":"OFF";$("#nstate").className="pillo"+(on?" on":"");$("#nbtn").textContent=on?"Turn off notifications":"Enable notifications";return on}
+$("#nbtn").onclick=async()=>{const m=$("#nmsg");m.textContent="";
+  if(nui()){store.set("notify",false);nui();return}
+  if(!canNotify()){m.textContent="This browser does not support notifications.";return}
+  const p=Notification.permission==="default"?await Notification.requestPermission():Notification.permission;
+  if(p==="granted"){store.set("notify",true);nui()}else m.textContent="Notifications are blocked. Allow them in your browser's site settings to turn this on."};
+$("#prefs").onclick=()=>$("#notif").scrollIntoView({behavior:"smooth"});
+function banner(d){const m=[],q=d.status||{},st=d.storm_status||{};
+  if(q.last_error)m.push("Earthquake feed: "+q.last_error);
+  if(st.last_error)m.push("Storm feed: "+st.last_error);else if(st.stale)m.push("Storm data may be out of date (the source could not be reached).");
+  $("#banner").innerHTML=m.map(x=>`<div class="warnb">⚠ ${esc(x)}</div>`).join("");
+  const n=alerts.filter(x=>x.category==="storm").length;
+  $("#attr").textContent=(st.last_ok?`Storm feed connected: ${st.active} active storm(s) worldwide, ${n} inside or heading to the Philippines. `:"")+(st.attribution||"")}
+async function load(){
+  try{const r=await fetch("/api/feed");if(!r.ok)throw new Error("HTTP "+r.status);const d=await r.json();alerts=d.alerts||[];banner(d);
+    if(!first&&nui())alerts.filter(a=>!a.expired&&!a.sample&&!known.has(a.id)&&(a.level==="high"||a.near!==false)).forEach(a=>new Notification(a.title,{body:a.source+" · "+a.area}));
+    alerts.forEach(a=>known.add(a.id));first=false;render()}
+  catch(e){$("#list").innerHTML='<div class="card empty">Could not load alerts. Is the server running?</div>';$("#detail").innerHTML=""}}
+nui();load();setInterval(load,60000);
+</script>
+<script src="/assist.js" defer></script>
+</body>
+</html>

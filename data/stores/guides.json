@@ -1,0 +1,210 @@
+[
+ {
+  "id": "flood-go-bag",
+  "topic": "Flood",
+  "headline": "Move documents and your go bag to a higher place.",
+  "details": [
+   "Put IDs, medicines, cash and phone chargers in a waterproof bag.",
+   "Keep the bag where you can grab it quickly, on an upper floor or a high shelf."
+  ],
+  "tags": [
+   "flood_high",
+   "flood_medium",
+   "rain_heavy",
+   "rain_advisory",
+   "storm_near"
+  ],
+  "priority": 1,
+  "verified": false,
+  "source": "Draft based on common public preparedness advice. Needs review and approval by the Batangas City disaster office (CDRRMO) before it is marked verified."
+ },
+ {
+  "id": "flood-stay-out",
+  "topic": "Flood",
+  "headline": "Stay out of floodwater. It can hide open drains and sweep people and vehicles away.",
+  "details": [
+   "Do not walk, swim or drive through moving or deep water.",
+   "Floodwater can carry disease and may be electrically charged."
+  ],
+  "tags": [
+   "flood_high",
+   "rain_heavy",
+   "storm_near"
+  ],
+  "priority": 2,
+  "verified": false,
+  "source": "Draft based on common public preparedness advice. Needs review and approval by the Batangas City disaster office (CDRRMO) before it is marked verified."
+ },
+ {
+  "id": "flood-power",
+  "topic": "Flood",
+  "headline": "If water may enter your home, switch off the main power only if you can reach it safely.",
+  "details": [
+   "Never touch switches or electrical items while standing in water.",
+   "Unplug appliances and move them up if there is time."
+  ],
+  "tags": [
+   "flood_high"
+  ],
+  "priority": 4,
+  "verified": false,
+  "source": "Draft based on common public preparedness advice. Needs review and approval by the Batangas City disaster office (CDRRMO) before it is marked verified."
+ },
+ {
+  "id": "evac-route",
+  "topic": "Evacuation",
+  "headline": "Know your route to {center} and leave early if water rises.",
+  "details": [
+   "Avoid underpasses, low bridges and fast-moving water on the way.",
+   "Go together with your household and tell a family member or neighbour where you are going.",
+   "Follow instructions from your barangay or the city disaster office."
+  ],
+  "tags": [
+   "flood_high",
+   "flood_medium",
+   "rain_heavy",
+   "storm_near",
+   "landslide_high"
+  ],
+  "priority": 1,
+  "verified": false,
+  "source": "Draft based on common public preparedness advice. Needs review and approval by the Batangas City disaster office (CDRRMO) before it is marked verified.",
+  "requires": [
+   "center"
+  ]
+ },
+ {
+  "id": "power-charge",
+  "topic": "Power outage",
+  "headline": "Charge phones and power banks while you have power.",
+  "details": [
+   "Keep a flashlight and spare batteries ready.",
+   "Use flashlights instead of candles to avoid fires."
+  ],
+  "tags": [
+   "rain_heavy",
+   "rain_advisory",
+   "storm_near",
+   "flood_high"
+  ],
+  "priority": 3,
+  "verified": false,
+  "source": "Draft based on common public preparedness advice. Needs review and approval by the Batangas City disaster office (CDRRMO) before it is marked verified."
+ },
+ {
+  "id": "night-safety",
+  "topic": "Night safety",
+  "headline": "Keep a flashlight with you and stay together with your household after dark.",
+  "details": [
+   "If you must move, go as a group and keep to higher, well-lit ground.",
+   "Do not wade through floodwater in the dark."
+  ],
+  "tags": [
+   "flood_high",
+   "flood_medium",
+   "rain_heavy",
+   "rain_advisory",
+   "storm_near",
+   "landslide_high",
+   "quake_recent"
+  ],
+  "priority": 3,
+  "verified": false,
+  "source": "Draft based on common public preparedness advice. Needs review and approval by the Batangas City disaster office (CDRRMO) before it is marked verified.",
+  "requires": [
+   "dark"
+  ]
+ },
+ {
+  "id": "storm-secure",
+  "topic": "Storm",
+  "headline": "Secure loose items outside and stay indoors, away from windows.",
+  "details": [
+   "Bring in or tie down things the wind can carry.",
+   "Stay inside the strongest part of the building until officials say it is safe."
+  ],
+  "tags": [
+   "storm_near"
+  ],
+  "priority": 1,
+  "verified": false,
+  "source": "Draft based on common public preparedness advice. Needs review and approval by the Batangas City disaster office (CDRRMO) before it is marked verified."
+ },
+ {
+  "id": "storm-follow",
+  "topic": "Storm",
+  "headline": "Follow PAGASA bulletins and your barangay announcements.",
+  "details": [
+   "Check pagasa.dost.gov.ph for the latest warnings.",
+   "Keep a battery radio handy in case the internet goes down."
+  ],
+  "tags": [
+   "storm_near",
+   "rain_advisory"
+  ],
+  "priority": 2,
+  "verified": false,
+  "source": "Draft based on common public preparedness advice. Needs review and approval by the Batangas City disaster office (CDRRMO) before it is marked verified."
+ },
+ {
+  "id": "slide-move",
+  "topic": "Landslide",
+  "headline": "Stay away from steep slopes and watch for warning signs.",
+  "details": [
+   "Warning signs include new cracks in the ground, tilting trees or poles, and muddy or suddenly clear stream water.",
+   "If you see them, leave the area and tell your barangay."
+  ],
+  "tags": [
+   "landslide_high",
+   "landslide_moderate"
+  ],
+  "priority": 1,
+  "verified": false,
+  "source": "Draft based on common public preparedness advice. Needs review and approval by the Batangas City disaster office (CDRRMO) before it is marked verified."
+ },
+ {
+  "id": "eq-dch",
+  "topic": "Earthquake",
+  "headline": "If shaking starts, drop, cover and hold on.",
+  "details": [
+   "Protect your head and neck under a sturdy table.",
+   "Stay away from windows and heavy furniture that can fall."
+  ],
+  "tags": [
+   "quake_recent"
+  ],
+  "priority": 1,
+  "verified": false,
+  "source": "Draft based on common public preparedness advice. Needs review and approval by the Batangas City disaster office (CDRRMO) before it is marked verified."
+ },
+ {
+  "id": "eq-after",
+  "topic": "Earthquake",
+  "headline": "Expect aftershocks. Stay away from damaged buildings.",
+  "details": [
+   "After the shaking stops, check for gas leaks, damage and fallen power lines.",
+   "Follow instructions from officials and PHIVOLCS."
+  ],
+  "tags": [
+   "quake_recent"
+  ],
+  "priority": 2,
+  "verified": false,
+  "source": "Draft based on common public preparedness advice. Needs review and approval by the Batangas City disaster office (CDRRMO) before it is marked verified."
+ },
+ {
+  "id": "general-contacts",
+  "topic": "Be ready",
+  "headline": "Keep emergency numbers handy. Call 911 if anyone is in danger.",
+  "details": [
+   "Save your barangay hotline and a family contact in your phone.",
+   "Agree on a meeting place with your household."
+  ],
+  "tags": [
+   "always"
+  ],
+  "priority": 9,
+  "verified": false,
+  "source": "Draft based on common public preparedness advice. Needs review and approval by the Batangas City disaster office (CDRRMO) before it is marked verified."
+ }
+]

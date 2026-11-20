@@ -1,0 +1,85 @@
+[
+ {
+  "id": "a",
+  "name": "Community hall",
+  "lat": 13.759,
+  "lon": 121.056,
+  "status": "open",
+  "capacity": 100,
+  "occupied": 0,
+  "facilities": [
+   "Toilets",
+   "Water",
+   "Step-free entry"
+  ],
+  "contact": null,
+  "sample": true,
+  "manual": true
+ },
+ {
+  "id": "b",
+  "name": "School gym",
+  "lat": 13.752,
+  "lon": 121.064,
+  "status": "open",
+  "capacity": 150,
+  "occupied": 0,
+  "facilities": [
+   "Toilets",
+   "Water"
+  ],
+  "contact": null,
+  "sample": true,
+  "manual": true
+ },
+ {
+  "id": "d",
+  "name": "Civic center",
+  "lat": 13.77,
+  "lon": 121.052,
+  "status": "open",
+  "capacity": 200,
+  "occupied": 0,
+  "facilities": [
+   "Toilets",
+   "Step-free entry"
+  ],
+  "contact": null,
+  "sample": true,
+  "manual": true
+ },
+ {
+  "id": "3d102b",
+  "name": "Dream Zone",
+  "lat": 13.76623566111934,
+  "lon": 121.06323856792527,
+  "status": "open",
+  "capacity": 200,
+  "occupied": 0,
+  "facilities": [
+   "Toilets",
+   "Water",
+   "Step-free entry"
+  ],
+  "contact": null,
+  "sample": false,
+  "manual": true
+ },
+ {
+  "id": "daf8e9",
+  "name": "BSU Alangilan",
+  "lat": 13.784337008860753,
+  "lon": 121.0739723087345,
+  "status": "open",
+  "capacity": 1000,
+  "occupied": 0,
+  "facilities": [
+   "Toilets",
+   "Water",
+   "Step-free entry"
+  ],
+  "contact": null,
+  "sample": false,
+  "manual": true
+ }
+]
