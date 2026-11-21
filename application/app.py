@@ -17,6 +17,7 @@ import assist
 import centers
 import hazard
 import routing
+import weather
 
 app = Flask(__name__, static_folder=str(settings.STATIC_DIR), static_url_path="")
 ADMIN_KEY = os.environ.get("ADMIN_KEY") or secrets.token_urlsafe(6)   # printed at startup if not set
@@ -30,6 +31,11 @@ def need_admin():
 @app.get("/")
 def index():
     return send_from_directory(settings.STATIC_DIR, "index.html")
+
+
+@app.get("/overview")
+def overview_page():
+    return send_from_directory(settings.STATIC_DIR, "overview.html")
 
 
 @app.get("/admin")
@@ -52,6 +58,7 @@ hazard.init_app(app)                                      # /api/assess, /api/lo
 centers.init_app(app, need_admin)                         # /api/centers, /api/sim, admin edits
 routing.init_app(app, centers.snapshot)                   # /api/route
 alerts.init_app(app, need_admin)                          # /alerts page, /api/feed, staff alert posting
+weather.init_app(app, hazard.assess, alerts.current_feed)   # /api/weather (rainfall + combined risk)
 assist.init_app(app, need_admin, hazard.assess, alerts.current_feed, centers.snapshot)   # Lilikas Assist
 
 if __name__ == "__main__":
