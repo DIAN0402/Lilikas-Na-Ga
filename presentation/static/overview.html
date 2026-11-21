@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Overview · Lilikas Na Ga</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--red:#d62b2b;--red-d:#a31d1d;--navy:#0f2747;--ink:#2b3445;--mute:#7a8396;--line:#ecd9d9;--tint:#fbeeee;--card:#fff;--ok:#1b7a4b;--amber:#b7791f;--bg:#fbf3f3}
+*{box-sizing:border-box}body{margin:0;font-family:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+.app{display:grid;grid-template-columns:230px 1fr;gap:20px;padding:18px;min-height:100vh}
+aside{background:linear-gradient(180deg,#2a0b0b,#120505);color:#f3dcdc;border-radius:22px;padding:18px 14px;display:flex;flex-direction:column;position:sticky;top:18px;height:calc(100vh - 36px)}
+.brand{font-weight:800;font-size:17px;padding:4px 6px 16px;border-bottom:1px solid #ffffff1a}
+nav{margin-top:14px;display:grid;gap:4px}nav a{padding:10px 12px;border-radius:10px;color:#d9bcbc;font-size:13px;text-decoration:none}
+nav a.on{background:linear-gradient(90deg,#8d2020,#4a1111);color:#fff;border:1px solid #ffffff22}
+.city{margin-top:14px;padding:11px 12px;border:1px solid #ffffff1a;border-radius:10px;font-size:13px}
+.help{margin-top:auto;font-size:12px;color:#d9bcbc}.help b{display:block;color:#fff;margin-bottom:2px}
+main{max-width:1000px;width:100%}
+.top{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 14px;min-width:300px}
+.search input{border:0;outline:0;font:inherit;font-size:13px;flex:1;background:transparent}
+.link{background:none;border:0;color:var(--red);font-weight:700;font-size:13px;cursor:pointer}
+h1{font-size:34px;color:var(--navy);margin:26px 0 4px}h1 span{color:var(--red)}.sub{font-family:Georgia,serif;color:var(--mute);margin:0 0 18px;font-size:14px}
+.grid{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px}
+.card{background:var(--card);border-radius:16px;box-shadow:0 2px 14px #7a1f1f14;padding:18px;overflow:hidden}
+.tag{display:inline-block;background:#f9cfcf;color:var(--navy);font-weight:800;font-size:15px;padding:2px 9px;border-radius:6px;margin-bottom:10px}
+.hero{background:radial-gradient(circle at 20% 0,#7a1d1d,#1a0606 60%);color:#fff;min-height:270px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.hero.moderate{background:radial-gradient(circle at 20% 0,#7a5a1d,#1a1206 60%)}.hero.low{background:radial-gradient(circle at 20% 0,#1d6a43,#06140d 60%)}
+.hero h2{font-size:34px;margin:0}.hero p{margin:0;color:#e9cfcf;font-family:Georgia,serif;font-size:14px;max-width:460px}
+.evac{border:1px solid #ffffff22;background:#ffffff12;border-radius:8px;padding:9px 12px;font-size:13px}
+.btn{display:inline-block;border:0;border-radius:8px;padding:10px 16px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;color:#fff;background:var(--red);margin-right:8px}
+.btn.ghost{background:#ffffff14;border:1px solid #ffffff33}
+.badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 9px;border-radius:999px;background:#fff3d6;color:#9a6200;text-transform:uppercase}
+.mm{font-size:40px;font-weight:800;color:var(--navy);margin:10px 0 0}.mute{color:var(--mute);font-size:12px}
+svg.chart{width:100%;height:120px}.lg{display:flex;gap:14px;font-size:11px;color:var(--mute)}.lg i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+#map{height:230px;border-radius:10px;z-index:0;cursor:pointer}
+.minimap{position:relative;border-radius:10px;overflow:hidden}
+.minihint{position:absolute;left:9px;bottom:9px;z-index:600;pointer-events:none;background:#0f2747d9;color:#fff;font-size:10.5px;font-weight:700;padding:5px 10px;border-radius:999px;letter-spacing:.01em}
+.maphead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+.sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.minilegend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--mute);margin-top:9px}
+.nearby{margin-top:8px}
+.nearby a{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid #f1e4e4;font-size:12px;text-decoration:none;color:var(--ink)}
+.nearby a b{color:var(--navy)}.nearby .km{color:var(--mute);white-space:nowrap;font-weight:700}
+.pick{display:block;padding:12px 0;border-top:1px solid #f1e4e4;font-size:13px}.pick b{display:block;color:var(--navy)}.pick span{color:var(--mute);font-size:12px}
+.chip{display:inline-block;border:1.5px solid #f1c4c4;background:var(--tint);color:var(--red-d);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;margin:0 6px 8px 0}
+.note{border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;color:var(--red-d);background:#fff7f7}
+footer{font-size:12px;color:var(--mute);padding:14px 4px}footer a{color:var(--mute)}
+.err{color:#b01c1c;font-size:13px}
+@media(max-width:900px){.app{grid-template-columns:1fr}aside{display:none}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="brand">Lilikas Na Ga</div>
+  <nav><a class="on" href="/overview">Overview</a><a href="/">Hazard map &amp; evacuation</a><a href="/alerts">Alerts</a><a href="/preparedness">Preparedness &amp; help</a><a href="#" data-assist-open>✦ Lilikas Assist</a></nav>
+  <div class="city">📍 Batangas City</div>
+  <div class="help"><b>Need urgent help?</b>For emergencies, call 911.</div>
+</aside>
+<main>
+  <div class="top">
+    <form class="search" id="locform"><span>📍</span><input id="q" placeholder="Place name or coordinates (13.7565, 121.0583)"></form>
+    <button class="link" id="geo" type="button">Use my location</button>
+  </div>
+  <h1>Magandang araw<span>!</span></h1>
+  <p class="sub" id="where">Here's your risk snapshot and the next steps you can take.</p>
+
+  <div class="grid">
+    <section class="card hero" id="hero"><p>Loading your risk snapshot…</p></section>
+    <section class="card">
+      <span class="tag">Rainfall outlook</span> <span class="badge" id="rainClass"></span>
+      <div class="mm" id="mm">–</div><div class="mute">mm over the last 3 hours</div>
+      <svg class="chart" id="chart" viewBox="0 0 300 120" preserveAspectRatio="none"></svg>
+      <div class="lg"><span><i style="background:var(--red)"></i>Past 7 days (model data)</span><span><i style="background:#8a93a6"></i>Forecast</span></div>
+      <p class="mute" id="next24"></p>
+    </section>
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <div class="maphead"><span class="tag" style="margin:0">Hazards &amp; evacuation near you</span><a class="link" href="/">Open full map →</a></div>
+      <div class="minimap"><div id="map"></div><span class="minihint">Static preview · tap to open the full map</span></div>
+      <div class="minilegend"><span><i class="sw" style="background:#1f5aa6"></i>Flood</span><span><i class="sw" style="background:#a8631a"></i>Landslide</span><span><i class="sw" style="background:#d62b2b"></i>Active fault</span><span><b style="color:var(--ok)">●</b> Open center</span><span><b style="color:var(--red)">●</b> Full / closed</span></div>
+      <div class="nearby" id="nearby"></div>
+    </section>
+    <section class="card"><span class="tag">Picked for you</span><div id="picks"></div>
+      <button class="btn" style="width:100%;margin-top:10px" data-assist-open>Open Lilikas Assist</button></section>
+  </div>
+
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <section class="card" id="why"><span class="tag">Why this risk level?</span><div id="reasons"></div><p class="mute" id="note"></p></section>
+    <section class="card"><span class="tag">Official advice comes first</span><div class="note" id="advice">Checking alerts…</div>
+      <p><a class="link" href="/alerts">View alerts →</a></p></section>
+  </div>
+  <footer>Weather data: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (model data, not rain-gauge readings). Planning aid only; follow PAGASA and local officials.</footer>
+</main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const $=s=>document.querySelector(s), esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const get=async u=>{const r=await fetch(u),d=await r.json();if(!r.ok)throw new Error(d.error||r.statusText);return d};
+let loc=[13.7565,121.0583];
+
+function chart(days){
+  const max=Math.max(10,...days.map(d=>d.mm)), x=i=>10+i*(280/(days.length-1)), y=v=>105-(v/max)*90;
+  const pts=days.map((d,i)=>[x(i),y(d.mm)]), t=days.findIndex(d=>d.kind==="today");
+  const path=a=>a.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+  $("#chart").innerHTML=`<line x1="10" y1="105" x2="290" y2="105" stroke="#eee"/>
+    <path d="${path(pts.slice(0,t+1))}" fill="none" stroke="#d62b2b" stroke-width="2"/>
+    <path d="${path(pts.slice(t))}" fill="none" stroke="#8a93a6" stroke-width="2" stroke-dasharray="4 3"/>
+    <circle cx="${pts[t][0]}" cy="${pts[t][1]}" r="3.5" fill="#d62b2b"/>
+    <text x="10" y="119" font-size="8" fill="#7a8396">7 days ago</text><text x="${pts[t][0]-8}" y="119" font-size="8" fill="#7a8396">Today</text><text x="262" y="119" font-size="8" fill="#7a8396">+7 days</text>
+    <text x="10" y="10" font-size="8" fill="#7a8396">${max.toFixed(0)} mm/day</text>`;
+}
+
+async function showWeather(){
+  try{
+    const w=await get(`/api/weather?lat=${loc[0]}&lon=${loc[1]}`), r=w.risk;
+    $("#hero").className="card hero "+r.level;
+    $("#hero").innerHTML=`<h2>${esc(r.headline)}</h2><p>${esc(r.summary)}</p>
+      <div class="evac">ⓘ ${w.evac_order?"An evacuation order is active. Follow local officials.":"No official evacuation order"}</div>
+      <div><a class="btn" href="/">View map &amp; evacuation</a><a class="btn ghost" href="#why">Why this assessment?</a></div>`;
+    $("#mm").textContent=w.rain.last_3h_mm; $("#rainClass").textContent=w.rain.label;
+    $("#next24").textContent=`About ${w.rain.next_24h_mm} mm expected in the next 24 hours. Rain can increase flood risk in susceptible areas.`;
+    chart(w.daily);
+    $("#reasons").innerHTML=r.reasons.map(x=>`<span class="chip">${esc(x.label)}</span>`).join("");
+    $("#note").textContent=r.note;
+  }catch(e){ $("#hero").className="card hero"; $("#hero").innerHTML=`<p class="err">Could not load the weather: ${esc(e.message)}</p>`; }
+}
+async function showPicks(){
+  try{
+    const c=await get(`/api/assist/context?lat=${loc[0]}&lon=${loc[1]}`);
+    $("#picks").innerHTML=c.guides.slice(0,3).map(g=>`<a class="pick" href="#" data-assist-open><b>${esc(g.headline)}</b><span>${esc((g.details||[])[0]||"")}</span></a>`).join("");
+  }catch(e){ $("#picks").innerHTML=`<p class="err">${esc(e.message)}</p>`; }
+}
+async function showAdvice(){
+  try{
+    const f=await get("/api/feed"), a=f.alerts.find(x=>!x.expired&&x.near);
+    $("#advice").textContent=a?`${a.level_label}: ${a.title}. ${a.summary}`:"No active official alert for your area. Alerts from PHIVOLCS, storm feeds and city staff appear here.";
+  }catch(e){ $("#advice").textContent="Could not load alerts."; }
+}
+// ---- Static mini hazard map --------------------------------------------------------------
+// Same hazard layers as the main map page (/), but this copy is a fixed preview: no pan,
+// zoom or dragging. Tapping it opens the full interactive map.
+const FLOOD=["#9ec5ea","#4f8fd0","#1f5aa6"], SLIDE=["#f0cf8a","#d79b3b","#a8631a"];
+const shade=(c,cols)=>({color:cols[c-1],fillColor:cols[c-1],fillOpacity:.35+c*.12,weight:0});
+const km=(a,b,c,d)=>{const R=6371,r=x=>x*Math.PI/180,dlat=r(c-a),dlon=r(d-b);
+  const h=Math.sin(dlat/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dlon/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
+let mini=null, miniYou=null, miniHazards=null, miniPins=null;
+
+async function miniSetup(){
+  if(mini)return;
+  mini=L.map("map",{preferCanvas:true,zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,
+    doubleClickZoom:false,boxZoom:false,keyboard:false,touchZoom:false,zoomSnap:.25}).setView(loc,14);
+  const esri=p=>L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/"+p+"/MapServer/tile/{z}/{y}/{x}",{maxNativeZoom:16,maxZoom:19});
+  esri("Canvas/World_Light_Gray_Base").addTo(mini);
+  esri("Canvas/World_Light_Gray_Reference").addTo(mini);
+  miniHazards=L.layerGroup().addTo(mini);
+  miniPins=L.layerGroup().addTo(mini);
+  mini.on("click",()=>{location.href="/"});
+  const add=async(u,make)=>{try{make(await get(u))}catch(e){}};
+  await Promise.all([
+    add("/layers/boundary.json",d=>L.geoJSON(d,{style:{color:"#555",weight:1.2,fill:false},interactive:false}).addTo(miniHazards)),
+    add("/layers/flood.json",d=>L.geoJSON(d,{style:f=>shade(f.properties.c,FLOOD),interactive:false}).addTo(miniHazards)),
+    add("/layers/landslide.json",d=>L.geoJSON(d,{style:f=>shade(f.properties.c,SLIDE),interactive:false}).addTo(miniHazards)),
+    add("/layers/faults.json",d=>{const g=L.layerGroup();
+      d.features.forEach(f=>f.geometry.coordinates.forEach(([x,y])=>
+        L.circleMarker([y,x],{radius:1.4,color:"#d62b2b",weight:0,fillOpacity:.85,interactive:false}).addTo(g)));
+      g.addTo(miniHazards)})
+  ]);
+}
+
+async function showMap(){
+  try{ await miniSetup(); }catch(e){ return; }
+  if(miniYou)mini.removeLayer(miniYou);
+  miniYou=L.circleMarker(loc,{radius:7,color:"#fff",weight:3,fillColor:"#d62b2b",fillOpacity:1,interactive:false}).addTo(mini);
+  miniPins.clearLayers();
+  let near=[];
+  try{
+    const cs=await get("/api/centers");
+    near=cs.map(c=>({...c,dist:km(loc[0],loc[1],c.lat,c.lon)})).sort((a,b)=>a.dist-b.d);
+    near.forEach(c=>{const open=c.status==="open";
+      L.circleMarker([c.lat,c.lon],{radius:5,color:"#fff",weight:1.5,fillColor:open?"#1b7a4b":"#d62b2b",fillOpacity:.95})
+        .bindTooltip(`${esc(c.name)} · ${open?`${c.capacity-c.occupied} spaces left`:c.status}`,{direction:"top",offset:[0,-7]})
+        .addTo(miniPins)});
+  }catch(e){}
+  $("#nearby").innerHTML=near.slice(0,3).map(c=>
+    `<a href="/"><span><b>${esc(c.name)}</b> · ${c.status==="open"?`${c.capacity-c.occupied} spaces left`:esc(c.status)}</span>
+      <span class="km">${c.dist<1?Math.round(c.dist*1000)+" m":c.dist.toFixed(1)+" km"}</span></a>`).join("")
+    ||'<p class="mute">No evacuation centers found.</p>';
+  // Frame the user and the centers that are close enough to matter, capped so it stays a preview.
+  const near6=near.filter(c=>c.dist<=5).slice(0,4);
+  if(near6.length)mini.fitBounds(L.latLngBounds([[loc[0],loc[1]],...near6.map(c=>[c.lat,c.lon])]).pad(.1),{maxZoom:15,animate:false});
+  else mini.setView(loc,14,{animate:false});
+}
+function refresh(label){
+  $("#where").textContent=`Here's your risk snapshot for ${label||loc.map(v=>v.toFixed(4)).join(", ")} and the next steps you can take.`;
+  if(window.LilikasAssist)LilikasAssist.setLocation(loc[0],loc[1],true);
+  showWeather();showPicks();showAdvice();showMap();
+}
+$("#locform").onsubmit=async e=>{e.preventDefault();const q=$("#q").value.trim();if(!q)return;
+  try{const d=await get("/api/locate?q="+encodeURIComponent(q));loc=[d.lat,d.lon];refresh(d.label);}catch(err){$("#where").textContent=err.message;}};
+$("#geo").onclick=()=>navigator.geolocation?.getCurrentPosition(p=>{loc=[p.coords.latitude,p.coords.longitude];refresh("your location");});
+refresh("Batangas City");
+</script>
+<script src="/assist.js" defer></script>
+</body>
+</html>
