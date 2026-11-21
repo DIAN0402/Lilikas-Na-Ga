@@ -24,7 +24,7 @@ ADMIN_KEY=choose-a-long-random-value
 
 | Page | What it does |
 |---|---|
-| `/` | Full interactive hazard map, evacuation centers, route planner |
+| `/hazard map & evacuation` | Full interactive hazard map, evacuation centers, route planner |
 | `/overview` | Risk snapshot, rainfall outlook, and a small static hazard map |
 | `/alerts` | Earthquake, storm and staff alerts |
 | `/admin` | Staff tools: center capacity, alerts, reports |
