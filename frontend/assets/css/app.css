@@ -61,8 +61,8 @@ body.app { background: linear-gradient(160deg, #fff 0%, var(--paper) 40%, #fdeee
 .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
 .page-head h1 { font-size: 34px; line-height: 1.1; margin: 0 0 6px; font-weight: 800; letter-spacing: -.01em; }
 .page-head p { margin: 0; font-family: var(--serif); color: var(--slate); font-size: 13px; }
-.page-head.bar h1 { border-left: 3px solid var(--red); padding-left: 12px; }
-.page-head.bar p { padding-left: 15px; }
+.page-head.accent h1 { border-left: 3px solid var(--red); padding-left: 12px; }
+.page-head.accent p { padding-left: 15px; }
 .back { display: inline-flex; gap: 6px; align-items: center; color: var(--red); font-weight: 700; font-size: 12.5px; text-decoration: none; margin-bottom: 14px; }
 .foot { display: flex; gap: 8px; padding: 16px 2px 4px; font-size: 11.5px; color: var(--red); font-weight: 600; }
 .foot a { text-decoration: none; }
