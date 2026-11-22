@@ -7,15 +7,11 @@ const shade = (c, cols) => ({ color: cols[c - 1], fillColor: cols[c - 1], fillOp
 const layerCache = {};
 
 function base(map) {
-  // Esri light grey needs no key and works on localhost; OpenStreetMap tiles are the fallback.
-  const esri = p => L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/${p}/MapServer/tile/{z}/{y}/{x}`,
-    { maxNativeZoom: 16, maxZoom: 19, attribution: "Tiles © Esri" });
-  const light = L.layerGroup([esri("Canvas/World_Light_Gray_Base"), esri("Canvas/World_Light_Gray_Reference")]).addTo(map);
-  let fails = 0, swapped = false;
-  light.eachLayer(t => t.on("tileerror", () => {
-    if (swapped || ++fails < 6) return; swapped = true; map.removeLayer(light);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap contributors" }).addTo(map);
-  }));
+  // OpenStreetMap standard tiles: no API key, works on localhost.
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
 }
 
 async function geo(name) {
