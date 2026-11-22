@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alerts · Lilikas na ga?</title>
+<meta name="theme-color" content="#0e0709">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body>
+<main id="page" data-nav="alerts">
+  <div class="page-head bar"><div><h1 data-i18n>Alerts for your area</h1><p>Understand the message, the source and what to do next.</p></div>
+    <a class="btn" href="alert-preferences.html"><i data-icon="sliders"></i> <span data-i18n>Notification preferences</span></a></div>
+  <div class="filters" role="tablist" aria-label="Alert type" id="tabs"></div>
+  <div id="feed-status"></div>
+  <div class="alert-grid">
+    <div class="alist" id="list"><div class="card pad"><div class="skel" style="height:80px"></div></div></div>
+    <section class="card pad adetail" id="detail" aria-live="polite"></section>
+  </div>
+  <section class="card pad notif" id="notif">
+    <div><h3><i data-icon="bell" style="color:var(--red)"></i> Choose whether to receive notifications <span class="badge off" id="notif-state">Off</span></h3>
+      <p>Optional, location based notifications while this site is open. We ask for permission first; you can turn them off anytime. Delivery is not guaranteed and does not replace official channels.</p></div>
+    <a class="btn primary" href="alert-preferences.html" id="notif-btn"><i data-icon="bell"></i> Enable notifications</a>
+  </section>
+</main>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/shell.js"></script>
+<script src="assets/js/assist.js"></script>
+<script src="assets/js/pages/alerts.js"></script>
+</body>
+</html>

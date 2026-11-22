@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lilikas na ga? · Batangas City hazard map, alerts and evacuation</title>
+<meta name="description" content="Batangas City's guide to hazard risk, official alerts and safe evacuation. Free, in English and Filipino.">
+<meta name="theme-color" content="#0e0709">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/public.css">
+</head>
+<body data-nav="home">
+<section class="hero">
+  <div class="photo" style="background-image:linear-gradient(90deg,#0e0709 0%,#0e0709cc 22%,#0e070944 60%,#0e070922 100%),url(assets/img/lilikas-hero-home.jpg),linear-gradient(135deg,#3a1016,#0e0709)"></div>
+  <div class="wrap">
+    <h1>Know your area.<br>Prepare your next step.</h1>
+    <p class="lead">Batangas City’s guide to hazard risk, official alerts and safe evacuation. Free, in English and Filipino.</p>
+    <div class="search">
+      <form id="check"><input id="q" placeholder="Enter your barangay" aria-label="Enter your barangay" autocomplete="off"><button class="btn primary">Check my area <i data-icon="arrowR"></i></button></form>
+      <a class="btn dark" href="overview.html" data-i18n>Explore as guest</a>
+      <p class="msg" id="msg" role="status"></p>
+    </div>
+    <div class="covered"><small>Hazards covered</small><div class="chips">
+      <span class="hchip"><i data-icon="waves"></i> Baha</span><span class="hchip"><i data-icon="wind"></i> Bagyo</span>
+      <span class="hchip"><i data-icon="volcano"></i> Bulkan</span><span class="hchip"><i data-icon="quake"></i> Lindol</span></div></div>
+    <a class="voicepill" href="overview.html?assist=mic"><span class="mic"><i data-icon="mic"></i></span><span><em>“Hey Lilikas, report flood.”</em><span class="wave" aria-hidden="true">
+      <i style="height:5px"></i><i style="height:10px"></i><i style="height:14px"></i><i style="height:8px"></i><i style="height:12px"></i><i style="height:6px"></i><i style="height:13px"></i><i style="height:9px"></i><i style="height:5px"></i><i style="height:11px"></i><i style="height:7px"></i><i style="height:13px"></i><i style="height:6px"></i></span></span>
+      <span class="new"><small>NEW</small>Meet Lilikas Assist <i data-icon="arrowR"></i></span></a>
+  </div>
+  <span class="caption"><i data-icon="pin"></i> Mayon Volcano, Albay</span>
+</section>
+
+<section class="sec"><div class="wrap">
+  <span class="tick"><i data-icon="pin"></i></span><div class="kick">Know your risk</div>
+  <h2><b>See your risk in seconds.</b> Pick your barangay and get a clear risk level, the rainfall outlook and the next steps to take.</h2>
+  <div class="window">
+    <div class="chrome"><i></i><i></i><i></i><span>Lilikas Na Ga · Overview</span></div>
+    <div class="screen">
+      <div class="mside"><img src="assets/img/lilikas-logo-stacked.svg" alt="" onerror="this.remove()"><div class="on"></div><div></div><div></div><div></div></div>
+      <div class="mmain"><h4>Magandang araw, <span class="hl">Juan!</span></h4>
+        <div class="mrisk"><b>⚠ High risk · Prepare</b><span class="serif" style="font-size:11px;color:#e9d2d2;margin-top:6px">High flood susceptibility and heavy rainfall mean you should get ready and monitor official advice.</span></div>
+        <div class="mrain"><span class="label" style="font-size:11px">Rainfall outlook</span><b>32 mm</b><span class="muted">over the last 3 hours</span>
+          <svg viewBox="0 0 120 40" style="width:100%;margin-top:8px"><path d="M0 30 C20 28 30 12 50 16 S80 34 120 10" fill="none" stroke="#d32f2f" stroke-width="2"/></svg></div></div>
+    </div>
+    <div class="float-stat"><b>4 hazards</b><span>Flood, typhoon, volcano and earthquake, in one place.</span></div>
+  </div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <span class="tick"><i data-icon="bell"></i></span><div class="kick">Stay alerted</div>
+  <h2><b>Alerts you can act on.</b> Clear advisories, evacuation routes and a checklist that keeps your household ready.</h2>
+  <div class="fgrid">
+    <a class="fcard" href="alerts.html"><h3>Official alerts, explained</h3><p>Know what an advisory means for your area and what to do next.</p><span class="go">Open alerts <i data-icon="arrowR"></i></span>
+      <div class="peek"><b>Alerts for your area</b><p class="muted serif" style="font-size:11px;margin:4px 0 10px;color:var(--slate)">Understand the message, the source and what to do next.</p><span class="badge high">High · Prepare</span> <span class="badge advisory">Advisory</span></div></a>
+    <a class="fcard" href="map.html"><h3>Evacuation routes</h3><p>Compare open centers and see the route before you leave.</p><span class="go">Open hazard map <i data-icon="arrowR"></i></span>
+      <div class="peek" style="background:linear-gradient(135deg,var(--map-1),var(--map-2))"><span class="badge open">Open</span><br><b style="background:var(--pink-hl);padding:2px 6px;border-radius:4px;display:inline-block;margin-top:8px;font-size:14px">Community hall</b></div></a>
+    <a class="fcard" href="overview.html"><h3>Ready on your phone</h3><p>Your risk, alerts and emergency contacts in one tap.</p><span class="go">Open on your phone <i data-icon="arrowR"></i></span>
+      <div class="peek" style="max-width:200px;margin-left:auto;margin-right:auto"><b>Magandang araw, <span class="hl">Juan!</span></b><div class="mrisk" style="margin-top:8px;min-height:60px;border-radius:8px;padding:10px;background:radial-gradient(90% 90% at 80% 10%,#5a1414 0%,#2a0e13 45%,#0e0709 100%);color:#fff;font-weight:800;font-size:13px">High risk · Prepare</div></div></a>
+    <a class="fcard" href="preparedness.html"><h3>Household checklist</h3><p>Pack your go bag, plan where to meet and keep contacts handy.</p><span class="go">Open checklist <i data-icon="arrowR"></i></span>
+      <div class="peek"><div class="notice" style="font-size:11px"><i data-icon="phone" style="color:var(--red)"></i><b>In immediate danger? Call emergency services directly.</b></div><div class="row" style="margin-top:8px;font-size:11.5px"><input type="checkbox" checked disabled style="accent-color:var(--red)"> Pack drinking water and food</div></div></a>
+  </div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <span class="tick"><i data-icon="sparkle"></i></span><div class="kick">Lilikas Assist <span class="new">New</span></div>
+  <div class="assist-grid"><div>
+    <h2><b>Just say “Hey Lilikas.”</b> Report what is happening by voice and get the steps that fit your situation, picked from verified guides.</h2>
+    <div class="feat"><span class="ib"><i data-icon="mic"></i></span><div><b>Report by voice</b><span>Say what is happening. Assist fills in the report and always asks before sending.</span></div></div>
+    <div class="feat"><span class="ib"><i data-icon="sparkle"></i></span><div><b>Steps picked for you</b><span>Assist reads your area, rainfall and alerts, then picks the steps that matter right now.</span></div></div>
+    <div class="feat"><span class="ib"><i data-icon="shield"></i></span><div><b>Safe by design</b><span>It never writes new steps or issues orders, and you can cancel any report.</span></div></div>
+    <div class="row" style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn primary" href="overview.html?assist=home"><i data-icon="mic"></i> Try Lilikas Assist</a><a class="btn dark" href="methodology.html#assist">How it works <i data-icon="arrowR"></i></a></div>
+    <div class="ticks"><span><i data-icon="check"></i> Works while the site is open</span><span><i data-icon="check"></i> Shortcuts for iPhone and Android</span><span><i data-icon="check"></i> Saves reports with no signal</span></div>
+  </div>
+  <div class="mockpanel" aria-hidden="true">
+    <div class="row" style="display:flex;justify-content:space-between;font-weight:800;color:#fff"><span>✦ Lilikas Assist</span><span>×</span></div>
+    <div style="border:1px solid #ffffff1f;border-radius:10px;padding:9px 11px;margin:12px 0;font-size:11.5px;display:flex;justify-content:space-between;align-items:center"><span><b style="color:#fff">Listening for “Hey Lilikas”</b><br><small style="color:#cfb3b3">Only while this tab is open</small></span><span class="switch"><input type="checkbox" checked disabled><i></i></span></div>
+    <span style="font-size:10.5px;color:#ffb1a8">• Picked for your situation</span><div style="font-size:20px;font-weight:800;color:#fff;margin:6px 0">Do this now</div>
+    <div class="g"><span class="n">1</span><span>Move documents and your go bag to a higher place.<small>Verified guide · Flood</small></span></div>
+    <div class="g"><span class="n">2</span><span>Charge phones and power banks while you have power.<small>Verified guide · Power outage</small></span></div>
+    <div class="g"><span class="n">3</span><span>Know your route to Center A and leave early if water rises.<small>Verified guide · Evacuation</small></span></div>
+  </div></div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <span class="tick"><i data-icon="alert"></i></span><div class="kick">Hazards to watch</div>
+  <h2><b>Know what you are facing.</b> Real scenes from the Philippines show what each hazard can look like.</h2>
+  <div class="photos">
+    <div class="photo-card" style="background-image:url(assets/img/lilikas-hazard-flood.jpg)"><span class="tagr">Flood</span><div class="cap2"><b>Baha</b><span><i data-icon="pin"></i> Malabon, Metro Manila</span></div></div>
+    <div class="photo-card" style="background-image:url(assets/img/lilikas-hazard-typhoon.jpg)"><span class="tagr">Typhoon</span><div class="cap2"><b>Bagyo</b><span><i data-icon="pin"></i> Storm aftermath, Philippines</span></div></div>
+    <div class="photo-card" style="background-image:url(assets/img/lilikas-hazard-volcano.jpg)"><span class="tagr">Volcano</span><div class="cap2"><b>Bulkan</b><span><i data-icon="pin"></i> Mayon Volcano, Albay</span></div></div>
+  </div>
+</div></section>
+
+<section class="cta"><div class="wrap">
+  <h2>Be ready before the next storm.</h2>
+  <p>Create a free account to save your barangay and get alerts, or explore as a guest.</p>
+  <div class="row"><a class="btn primary lg" href="signup.html">Create account <i data-icon="arrowR"></i></a><a class="btn dark lg" href="overview.html" data-i18n>Explore as guest</a></div>
+  <a class="sos" href="tel:911"><i data-icon="phone"></i> In immediate danger? Call 911.</a>
+</div></section>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/public.js"></script>
+<script>
+(() => {
+  const { $ } = LNG;
+  $("#check").onsubmit = async e => {
+    e.preventDefault();
+    const q = $("#q").value.trim(), msg = $("#msg");
+    if (!q) { msg.textContent = "Type your barangay, for example “Poblacion” or “Kumintang Ibaba”."; return; }
+    msg.textContent = "Finding your area…";
+    try {
+      const d = await LNG.locate(/batangas/i.test(q) || /^\s*-?\d/.test(q) ? q : q + ", Batangas City");
+      LNG.setLoc({ lat: d.lat, lon: d.lon, label: /^\s*-?\d/.test(q) ? d.label : `Brgy. ${q.replace(/^brgy\.?\s*/i, "")}, Batangas City`, source: "manual" });
+      location.href = "overview.html";
+    } catch (ex) { msg.textContent = ex.status === 404 ? "We couldn't find that place. Check the spelling, or explore as a guest and pick it on the map." : ex.message; }
+  };
+})();
+</script>
+</body>
+</html>

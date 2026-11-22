@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create account · Lilikas na ga?</title>
+<meta name="theme-color" content="#7a1717">
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/public.css">
+</head>
+<body class="pub">
+<main class="auth" style="background-image:url(assets/img/lilikas-auth-signup.jpg)">
+  <div class="top"><a href="index.html"><i data-icon="arrowL"></i> Back to home</a><span class="lang"><button data-lang="en" style="background:none;border:0;color:#fff;font-weight:700">EN</button> / <button data-lang="fil" style="background:none;border:0;color:#fff;font-weight:700">Filipino</button></span></div>
+  <span class="bubble" style="left:9%;top:24%"><span class="ib"><i data-icon="waves"></i></span><span><b>Baha</b><small>Flood</small></span></span>
+  <span class="bubble" style="right:9%;top:28%"><span class="ib"><i data-icon="wind"></i></span><span><b>Bagyo</b><small>Typhoon &amp; habagat</small></span></span>
+  <span class="bubble" style="left:11%;bottom:30%"><span class="ib"><i data-icon="volcano"></i></span><span><b>Bulkan</b><small>Volcano · ashfall</small></span></span>
+  <span class="bubble" style="right:10%;bottom:32%"><span class="ib"><i data-icon="shield"></i></span><span><b>Handa ka ba?</b><small>Are you ready?</small></span></span>
+  <form class="glass" id="form" novalidate>
+    <a class="logo" href="index.html"><img src="assets/img/lilikas-logo-horizontal.svg" alt="Lilikas na ga?" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'badge-text',textContent:'Lilikas na ga?'}))"></a>
+    <h1>Create account</h1>
+    <p>Save your barangay and get alerts for your area. It only takes a minute.</p>
+    <p class="error" id="err" hidden role="alert"></p>
+    <label class="field"><span>Full name</span><input class="input" id="name" autocomplete="name" placeholder="Juan Dela Cruz" required></label>
+    <label class="field"><span>Email or mobile number</span><input class="input" id="contact" autocomplete="username" placeholder="juan@email.com or 0917 123 4567" required></label>
+    <label class="field"><span>Barangay</span><input class="input" id="barangay" placeholder="Brgy. Poblacion, Batangas City"></label>
+    <label class="field"><span>Password</span><span class="pw"><input class="input" id="password" type="password" autocomplete="new-password" placeholder="Create a password (8+ characters)" minlength="8" required><button type="button" data-show>Show</button></span></label>
+    <label class="check" style="margin:2px 0 14px"><input type="checkbox" id="agree"> <span>I agree to the <a href="methodology.html#terms" style="color:#fff;text-decoration:underline">Terms</a> and <a href="methodology.html#privacy" style="color:#fff;text-decoration:underline">Privacy Policy</a></span></label>
+    <button class="btn primary block lg" id="submit">Create account</button>
+    <p class="alt">Already have an account? <a href="login.html" id="swap">Log in</a></p>
+    <p class="alt" style="opacity:.8;font-size:11px">Accounts are kept in server memory until the database is added, so they reset when the server restarts.</p>
+  </form>
+  <a class="sos-pill" href="tel:911"><i data-icon="alert"></i> Emergency? Call 911. This site does not replace 911.</a>
+</main>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/pages/auth.js"></script>
+</body>
+</html>

@@ -1,13 +1,20 @@
 # secrets
 .env
+backend/.env
 
 # python
 __pycache__/
 *.pyc
 .venv/
-
-# runtime state written by the app (may hold personal data)
-data/stores/reports.json
-data/stores/alerts.json
-data/stores/*.tmp
+venv/
 .pytest_cache/
+
+# runtime state written by the backend (may hold personal data)
+backend/data/stores/reports.json
+backend/data/stores/alerts.json
+backend/data/stores/*.tmp
+
+# IDE
+.idea/
+.DS_Store
+frontend/assets/img/.assets-stamp

@@ -24,7 +24,7 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 
-from flask import jsonify, request, send_from_directory
+from flask import jsonify, request
 from shapely.affinity import affine_transform
 from shapely.geometry import Point, Polygon
 
@@ -390,12 +390,8 @@ def start():
 
 
 def init_app(app, need_admin):
-    """Register the Alerts page and its routes. `need_admin()` is the app's key check."""
+    """Register the alert routes. `need_admin()` is the app's key check."""
     _load()
-
-    @app.get("/alerts")
-    def alerts_page():
-        return send_from_directory(app.static_folder, "alerts.html")
 
     @app.get("/api/feed")
     def api_feed():

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hazard map &amp; evacuation · Lilikas na ga?</title>
+<meta name="theme-color" content="#0e0709">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body>
+<main id="page" data-nav="map">
+  <div class="page-head"><div><h1 data-i18n>Hazard map & evacuation</h1><p>Compare hazards, center suitability and routes, not just distance.</p></div></div>
+  <div class="filters" role="toolbar" aria-label="Map filters">
+    <button class="fchip" id="f-flood" aria-pressed="true"><i data-icon="waves"></i> Flood susceptibility</button>
+    <div class="dd"><button class="fchip" data-menu="m-haz" aria-haspopup="true" aria-pressed="false"><i data-icon="down"></i> Other hazards</button>
+      <div class="menu" id="m-haz"><label><input type="checkbox" id="f-landslide"> Landslide susceptibility</label><label><input type="checkbox" id="f-faults"> Active faults</label></div></div>
+    <button class="fchip" id="f-open" aria-pressed="false"><i data-icon="check"></i> Open centers only</button>
+    <div class="dd"><button class="fchip" data-menu="m-fac" aria-haspopup="true" aria-pressed="false"><i data-icon="sliders"></i> Accessibility & facilities</button>
+      <div class="menu" id="m-fac"><label><input type="checkbox" value="Toilets"> Toilets</label><label><input type="checkbox" value="Water"> Water</label><label><input type="checkbox" value="Step-free entry"> Step-free entry</label></div></div>
+  </div>
+
+  <div class="mapgrid">
+    <section class="card pad">
+      <div class="map" id="map"></div>
+      <div class="legend"><span><i style="background:#4f8fd0"></i>Flood: darker = higher</span><span><i style="background:#d79b3b"></i>Landslide</span><span><i style="background:#d32f2f;border-radius:50%"></i>Your location</span><span><i style="background:#d32f2f;height:3px"></i>Route</span><span><i style="background:#237660;border-radius:50%"></i>Open center (ring = recommended)</span></div>
+      <p class="muted serif" style="font-size:12px;margin:8px 0 0">Click the map or search a place in the top bar to plan from there.</p>
+    </section>
+    <div class="stack">
+      <section class="card pad" id="detail"><div class="skel" style="height:120px"></div></section>
+      <section class="card pad routecard" id="route">
+        <div class="row"><span class="iconbtn" style="width:30px;height:30px;background:var(--red);color:#fff;border:0"><i data-icon="route"></i></span><b>Route preview</b></div>
+        <div class="seg" role="group" aria-label="Travel mode"><button data-mode="walking" aria-pressed="true"><i data-icon="walk"></i> Walk</button><button data-mode="driving" aria-pressed="false"><i data-icon="car"></i> Drive</button></div>
+        <div id="routebox"><div class="km">–</div><div class="muted serif" style="font-size:12px">Finding the best center…</div></div>
+        <a class="btn block" id="review" href="route.html" style="margin-top:12px"><i data-icon="info"></i> Review route limitations</a>
+      </section>
+    </div>
+  </div>
+
+  <h2 style="font-size:20px;margin:28px 0 12px" class="row"><span data-i18n>Compare evacuation options</span> <small id="live" style="font-size:11.5px;color:var(--green);font-weight:700"></small></h2>
+  <div class="cmp" id="cmp"></div>
+  <p class="muted serif" style="font-size:12px;margin-top:18px">Evacuation center details are <b>sample data</b> until replaced with official records. Capacity numbers are simulated for the demo. Hazard layers are planning references, not official advisories.</p>
+</main>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/shell.js"></script>
+<script src="assets/vendor/leaflet/leaflet.js"></script>
+<script src="assets/js/mapkit.js"></script>
+<script src="assets/js/assist.js"></script>
+<script src="assets/js/pages/map.js"></script>
+</body>
+</html>

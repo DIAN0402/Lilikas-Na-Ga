@@ -1,0 +1,10 @@
+{
+  "name": "Lilikas na ga?",
+  "short_name": "Lilikas",
+  "description": "Batangas City hazard map, alerts and evacuation help.",
+  "start_url": "overview.html",
+  "display": "standalone",
+  "background_color": "#0e0709",
+  "theme_color": "#0e0709",
+  "icons": [{ "src": "assets/img/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

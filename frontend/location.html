@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Use your location · Lilikas na ga?</title>
+<meta name="theme-color" content="#0e0709">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body>
+<main id="page" data-nav="overview">
+  <a class="back" id="back" href="index.html"><i data-icon="arrowL"></i> Back</a>
+  <section class="sheet">
+    <div class="head"><span class="ib"><i data-icon="locate"></i></span><h1>Use your location to find your area?</h1>
+      <p>Your device location can help place you on the map and show relevant risk context and nearby evacuation options.</p></div>
+    <div class="body">
+      <div class="item"><i data-icon="pin"></i><div><b>Find the area you want to check</b><p>Use a location reading for this check. Device accuracy can vary; review the selected place before relying on it.</p></div></div>
+      <div class="item"><i data-icon="user"></i><div><b>You stay in control</b><p>This is not continuous tracking. It does not share your location with contacts, family or responders.</p></div></div>
+      <div class="notice" style="margin-top:4px"><i data-icon="info" style="color:var(--red)"></i><div><b style="display:block;margin-bottom:2px">Your browser asks separately</b><span class="serif">Choosing “Use my location” is the next step, not permission itself. Your browser would then ask you to allow location access. You can decline or change permission in browser settings.</span></div></div>
+      <p class="error" id="err" hidden style="margin-top:12px"></p>
+      <div class="actions">
+        <button class="btn primary" id="use"><i data-icon="locate"></i> Use my location</button>
+        <button class="btn" id="manual"><i data-icon="map"></i> Choose barangay manually</button>
+        <a class="btn" id="skip" href="overview.html" style="justify-self:center;width:auto;padding:7px 12px">Not now · Continue as guest</a>
+      </div>
+    </div>
+  </section>
+  <p class="fine"><a class="link" href="methodology.html#privacy">Privacy & location permissions</a></p>
+</main>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/shell.js"></script>
+<script src="assets/js/assist.js"></script>
+<script>
+(() => {
+  const { $ } = LNG, next = new URLSearchParams(location.search).get("next") || "overview.html";
+  const safeNext = /^[a-z-]+\.html([?#].*)?$/.test(next) ? next : "overview.html";
+  $("#back").href = safeNext; $("#skip").href = safeNext;
+  $("#back").lastChild.textContent = safeNext.startsWith("overview") ? " Back to overview" : " Back";
+  $("#use").onclick = async () => {
+    const b = $("#use"), err = $("#err"); err.hidden = true; b.disabled = true; b.lastChild.textContent = " Waiting for your browser…";
+    LNG.store.set("locConsent", true);
+    try {
+      const p = await LNG.deviceLocation();
+      let label = "Your device location";
+      try { const c = await LNG.api(`/api/assist/context?lat=${p.lat}&lon=${p.lon}`); if (c.barangay) label = `Brgy. ${c.barangay}, Batangas City`; } catch {}
+      LNG.setLoc({ lat: p.lat, lon: p.lon, label, source: "device" });
+      location.href = safeNext;
+    } catch (e) { err.textContent = e.message; err.hidden = false; b.disabled = false; b.lastChild.textContent = " Try again"; }
+  };
+  $("#manual").onclick = e => { e.stopPropagation(); window.scrollTo(0, 0); $("#loc-btn").click(); };
+  LNG.on("location", l => { if (l.source === "manual") location.href = safeNext; });
+})();
+</script>
+</body>
+</html>

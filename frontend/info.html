@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lilikas na ga?</title>
+<meta name="theme-color" content="#0e0709">
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/public.css">
+</head>
+<body data-nav="overview">
+<section class="hero" style="min-height:620px">
+  <div class="photo" id="photo"></div>
+  <div class="wrap">
+    <span class="pill" style="background:#ffffff14;border-color:#ffffff26;color:#fff" id="kicker"></span>
+    <h1 id="title" style="margin-top:16px"></h1>
+    <p class="lead" id="lead"></p>
+    <div class="row" style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn primary" id="login">Log in <i data-icon="arrowR"></i></a><a class="btn dark" href="signup.html">Create account</a><a class="btn ghost" id="guest" style="color:#fff">Continue as guest <i data-icon="arrowR"></i></a></div>
+  </div>
+  <span class="caption" id="caption"></span>
+</section>
+<section class="sec"><div class="wrap">
+  <span class="tick"><i data-icon="sparkle"></i></span><div class="kick">What you get</div>
+  <h2 id="get"></h2>
+  <div class="fgrid" style="grid-template-columns:repeat(3,1fr)" id="feats"></div>
+</div></section>
+<section class="sec"><div class="wrap">
+  <span class="tick"><i data-icon="eye"></i></span><div class="kick">See it in action</div>
+  <h2 id="action"></h2>
+  <div class="window" id="shotwin" style="margin-bottom:26px"><div class="chrome"><i></i><i></i><i></i><span id="shottitle">Lilikas Na Ga</span></div>
+    <img class="shot" id="shot" alt="" onerror="this.closest('.window').remove()"></div>
+  <a class="btn primary" id="open">Open it now <i data-icon="arrowR"></i></a>
+</div></section>
+<section class="cta"><div class="wrap">
+  <h2 id="cta"></h2>
+  <div class="row"><a class="btn primary lg" href="login.html" id="login2">Log in</a><a class="btn dark lg" href="signup.html">Sign up</a></div>
+  <a class="sos" href="tel:911"><i data-icon="phone"></i> In immediate danger? Call 911.</a>
+</div></section>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script>
+(() => {
+  const PAGES = {
+    overview: { nav: "overview", page: "overview.html", icon: "grid", kicker: "Overview", title: "Your risk, at a glance.", lead: "One screen with your barangay risk level, the rainfall outlook and the next steps to take.",
+      photo: "info-overview.jpg", caption: "Malabon, Metro Manila",
+      get: "<b>Everything in one place.</b> Overview brings the most important information for your area together.",
+      feats: [["alert", "Risk level", "A clear level for your barangay, with the reasons behind it."], ["rain", "Rainfall outlook", "Recent rainfall and the forecast for the week ahead."], ["list", "Next steps", "Simple actions to take now, from packing a go bag to checking alerts."]],
+      action: "<b>Made to read quickly.</b> Big, clear numbers and plain words, so you know what to do in seconds.", cta: "Check your area today." },
+    map: { nav: "map", page: "map.html", icon: "map", kicker: "Hazard map", title: "See the hazards around you.", lead: "Explore flood prone areas, find open evacuation centers and preview your route before you leave.",
+      photo: "info-map.jpg", caption: "Malabon, Metro Manila",
+      get: "<b>Plan your way to safety.</b> The hazard map shows where the risks are and where you can go.",
+      feats: [["layers", "Hazard layers", "Flood, landslide and active fault lines shown on one map."], ["home", "Evacuation centers", "See which centers are open and how much space is left."], ["route", "Route preview", "Check the walking or driving route and its limits before you go."]],
+      action: "<b>Compare before you go.</b> Pick the closest safe center, not just the nearest one.", cta: "Find your nearest safe place." },
+    alerts: { nav: "alerts", page: "alerts.html", icon: "bell", kicker: "Alerts", title: "Alerts you can understand.", lead: "Advisories explained in plain words, with the source, the affected area and what to do next.",
+      photo: "info-alerts.jpg", caption: "Storm aftermath, Philippines",
+      get: "<b>Know what each alert means.</b> Every advisory comes with the details you need to act.",
+      feats: [["info", "Clear source", "Every alert shows who issued it and when it expires."], ["list", "What to do", "Simple steps to follow for each advisory."], ["sliders", "Your notifications", "Choose the hazards and areas you want to hear about."]],
+      action: "<b>Calm, clear and on time.</b> Alerts are sorted so the most urgent ones come first.", cta: "Stay informed, not overwhelmed." },
+    prep: { nav: "prep", page: "preparedness.html", icon: "shield", kicker: "Preparedness", title: "Be ready before you need to be.", lead: "A household checklist, emergency contacts and a safe way to share your location with family.",
+      photo: "info-prep.jpg", caption: "Mayon Volcano, Albay",
+      get: "<b>Small steps, better prepared.</b> Get your household ready one task at a time.",
+      feats: [["list", "Household checklist", "Track your go bag, documents and meeting point."], ["phone", "Emergency contacts", "The 911 hotline and local offices in one place."], ["send", "Share your location", "Send a short message to family, only when you choose."]],
+      action: "<b>Your plan in one place.</b> See what is done and what is left, and print your plan anytime.", cta: "Start your household plan." },
+  };
+  const key = new URLSearchParams(location.search).get("p"), P = PAGES[key] || PAGES.overview, { $, icon } = LNG;
+  document.body.dataset.nav = P.nav;
+  document.title = `${P.kicker} · Lilikas na ga?`;
+  $("#photo").style.backgroundImage = `linear-gradient(90deg,#0e0709 0%,#0e0709cc 22%,#0e070944 60%,#0e070922 100%),url(assets/img/${P.photo}),linear-gradient(135deg,#3a1016,#0e0709)`;
+  $("#kicker").innerHTML = `${icon(P.icon)} ${P.kicker}`;
+  $("#title").textContent = P.title; $("#lead").textContent = P.lead; $("#caption").innerHTML = `${icon("pin")} ${P.caption}`;
+  $("#login").href = $("#login2").href = `login.html?next=${P.page}`; $("#login").firstChild.textContent = `Log in to open ${P.kicker} `;
+  $("#guest").href = $("#open").href = P.page;
+  $("#shot").src = `assets/img/shot-info-${key in PAGES ? key : "overview"}.jpg`; $("#shot").alt = `${P.kicker} screen`;
+  $("#shottitle").textContent = `Lilikas Na Ga · ${P.kicker}`;
+  $("#get").innerHTML = P.get; $("#action").innerHTML = P.action; $("#cta").textContent = P.cta;
+  $("#feats").innerHTML = P.feats.map(([ic, t, d]) => `<div class="fcard" style="padding-bottom:22px"><span class="feat" style="margin:0 0 12px"><span class="ib">${icon(ic)}</span></span><h3>${t}</h3><p>${d}</p></div>`).join("");
+})();
+</script>
+<script src="assets/js/public.js"></script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Staff admin · Lilikas na ga?</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/theme.css">
+<style>
+body{background:var(--paper);padding:24px}.wrap{max-width:1000px;margin:0 auto}h1{margin:0 0 4px;font-size:28px}.sub{color:var(--slate);margin:0 0 18px;font-family:var(--serif);font-size:13px}
+.card{padding:18px;margin-bottom:14px}h2{font-size:16px;margin:0 0 10px}input,select,textarea{border:1px solid #e3d6d6;border-radius:8px;padding:7px 9px;font-size:13px;background:#fff}
+input[type=number]{width:90px}.q{padding:6px 9px;min-width:40px}
+.crow{display:grid;grid-template-columns:1.2fr 1.8fr 1fr 1fr auto;gap:12px;align-items:center;border-top:1px solid var(--line);padding:12px 0}.crow:first-child{border-top:0}
+.nm{font-weight:800}.nm small{display:block;color:var(--slate);font-weight:500;font-size:12px;margin-top:2px}.lab{font-size:11px;color:var(--slate);display:block;margin-bottom:3px}
+.occ{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.ok{color:var(--green);font-size:12px;font-weight:700}
+.form{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.form label{font-size:11px;color:var(--slate);font-weight:700}.form input,.form select,.form textarea{display:block;width:100%;margin-top:3px}
+.rrow{display:grid;grid-template-columns:1.2fr 2fr 1fr;gap:12px;align-items:center;border-top:1px solid var(--line);padding:12px 0}.rrow:first-child{border-top:0}.rrow.hot{background:#fff1f1}
+.bar{height:5px;background:var(--pink-2);border-radius:9px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--red)}
+.row{display:flex;gap:10px;align-items:center}.between{display:flex;justify-content:space-between;align-items:center;gap:10px}
+@media(max-width:800px){.crow,.rrow,.form{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Staff admin</h1>
+  <p class="sub">Evacuation center numbers, citizen reports, staff alerts and the capacity simulator. <a class="link" href="map.html">Open the public map</a></p>
+  <div class="card" id="login"><h2>Admin key</h2><p class="sub">Printed in the terminal when you start the backend (or set ADMIN_KEY in backend/.env).</p>
+    <div class="row"><input id="key" type="password" placeholder="Admin key" autocomplete="off"> <button class="btn primary" id="go">Sign in</button> <span class="error" id="lerr"></span></div></div>
+  <div id="panel" hidden>
+    <div class="card"><h2>Status</h2><div id="status" class="sub" style="margin:0"></div>
+      <div class="row" style="margin-top:10px;flex-wrap:wrap"><button class="btn sm" id="aitest">Test the AI now</button><span id="aitest-out" class="sub" style="margin:0"></span></div>
+      <div class="row" style="margin-top:10px;flex-wrap:wrap">Capacity simulator: <button class="btn sm" data-sim="calm">Calm</button><button class="btn sm" data-sim="storm">Storm (surge)</button><button class="btn sm" data-sim="paused">Pause</button><span id="simmode" class="sub" style="margin:0"></span></div></div>
+    <div class="card"><div class="between"><h2>Citizen reports</h2><button class="btn sm" id="rreload">Refresh</button></div><div id="rlist"></div></div>
+    <div class="card"><h2>Post a staff alert</h2>
+      <div class="form">
+        <label>Type<select id="a-kind"><option value="rain_flood">Rain & flood</option><option value="local">Local advice</option></select></label>
+        <label>Level<select id="a-level"><option value="advisory">Advisory</option><option value="high">High · Prepare</option></select></label>
+        <label>Hours until it expires<input id="a-hours" type="number" min="0.1" max="168" value="6" style="width:100%"></label>
+        <label style="grid-column:1/-1">Title<input id="a-title" maxlength="100" placeholder="Heavy rainfall advisory"></label>
+        <label style="grid-column:1/-1">Summary<textarea id="a-summary" rows="2" maxlength="400"></textarea></label>
+        <label style="grid-column:1/-1">Steps, one per line as “Title | detail” (up to 3)<textarea id="a-steps" rows="3" placeholder="Prepare essentials | Keep your go bag, medicine and charged phone within reach."></textarea></label>
+        <label>Source<input id="a-source" placeholder="PAGASA"></label>
+        <label class="check" style="align-self:end"><input type="checkbox" id="a-evac"> Official evacuation order</label>
+      </div>
+      <div class="row" style="margin-top:12px"><button class="btn primary" id="a-post">Post alert</button><span id="a-msg"></span></div>
+      <div id="alist" style="margin-top:12px"></div></div>
+    <div class="card"><div class="between"><h2>Evacuation centers</h2><button class="btn sm" id="reload">Reload numbers</button></div>
+      <p class="sub">Tick <b>Manual</b> on a center to stop the simulator from changing it.</p><div id="list"></div></div>
+    <div class="card"><h2>Add an evacuation center</h2>
+      <p class="sub">To get coordinates, right-click the place in Google Maps and click the numbers at the top of the menu (latitude first). It must be inside Batangas City.</p>
+      <div class="form">
+        <label>Name<input id="n-name" maxlength="80" placeholder="Barangay Poblacion covered court"></label>
+        <label>Latitude<input id="n-lat" type="number" step="any" placeholder="13.7565" style="width:100%"></label>
+        <label>Longitude<input id="n-lon" type="number" step="any" placeholder="121.0583" style="width:100%"></label>
+        <label>Capacity (people)<input id="n-cap" type="number" min="1" placeholder="100" style="width:100%"></label>
+        <label>Starting status<select id="n-status"><option>open</option><option>closed</option><option>unavailable</option></select></label>
+        <label>Contact (optional)<input id="n-contact" maxlength="120" placeholder="Name / phone"></label>
+      </div>
+      <div class="row" style="margin:12px 0;flex-wrap:wrap"><span class="lab" style="margin:0">Facilities</span>
+        <label class="check"><input type="checkbox" class="fac" value="Toilets"> Toilets</label><label class="check"><input type="checkbox" class="fac" value="Water"> Water</label><label class="check"><input type="checkbox" class="fac" value="Step-free entry"> Step-free entry</label></div>
+      <div class="row"><button class="btn primary" id="add">Add center</button><span id="addmsg"></span></div></div>
+  </div>
+</div>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script>
+(() => {
+const { $, $$, esc } = LNG;
+let key = sessionStorage.getItem("lilikas.adminKey") || "";
+const call = (p, method = "GET", body) => LNG.api(p, { method, body, admin: key });
+const LV = { ankle: "ankle", knee: "knee", thigh: "thigh", waist: "waist", chest: "chest", over_head: "over head", unknown: "not stated" };
+async function signIn() {
+  key = $("#key").value || key;
+  try { await call("/api/admin/check"); } catch (e) { $("#lerr").textContent = e.status === 401 ? "Wrong key." : e.message; return; }
+  sessionStorage.setItem("lilikas.adminKey", key); $("#login").hidden = true; $("#panel").hidden = false; load(); loadReports(); loadStatus(); loadAlerts();
+}
+$("#go").onclick = signIn; $("#key").onkeydown = e => { if (e.key === "Enter") signIn(); };
+$("#reload").onclick = load; $("#rreload").onclick = loadReports;
+async function loadStatus() {
+  try {
+    const a = await call("/api/admin/assist/status"), s = await call("/api/sim");
+    $("#status").innerHTML = `Lilikas Assist AI: <b>${a.enabled ? `on (${esc(a.model)} via ${esc(a.provider)})` : "off, simple rules only"}</b>${a.last_error ? ` · last problem: ${esc(a.last_error)}` : a.last_ok ? " · working" : ""}${a.enabled ? "" : " · set AI_API_KEY in backend/.env to turn it on"}`;
+    $("#simmode").textContent = "Mode: " + s.mode;
+  } catch (e) { $("#status").textContent = e.message; }
+}
+$("#aitest").onclick = async () => {
+  $("#aitest-out").textContent = "Calling the AI…";
+  try { const d = await LNG.api("/api/assist/ai?check=1", { timeout: 40000 }); const c = d.check || {};
+    $("#aitest-out").innerHTML = c.ok ? `<span class="ok">Working: ${esc(d.model)} answered in ${c.ms} ms.</span>` : `<span class="error">Not working: ${esc(c.error || "unknown problem")}</span>`; loadStatus(); }
+  catch (e) { $("#aitest-out").innerHTML = `<span class="error">${esc(e.message)}</span>`; }
+};
+$$("[data-sim]").forEach(b => b.onclick = async () => { try { await call("/api/sim", "POST", { mode: b.dataset.sim }); loadStatus(); } catch (e) { LNG.toast(e.message); } });
+async function loadReports() {
+  try {
+    const rows = (await call("/api/admin/reports")).reports;
+    $("#rlist").innerHTML = rows.map(x => `<div class="rrow ${x.life_in_danger ? "hot" : ""}" data-rid="${esc(x.id)}">
+      <div class="nm">${x.life_in_danger ? "🚨 " : ""}${esc(x.report_type)}${x.water_level ? " · " + esc(LV[x.water_level] || x.water_level) : ""}<small>${new Date(x.created).toLocaleString()} · ${esc(x.id)}${x.queued_at ? " · sent after being offline" : ""}</small></div>
+      <div><span class="lab">${esc(x.barangay ? "Brgy. " + x.barangay : "Batangas City")}${x.location_note ? " · " + esc(x.location_note) : ""} · ${x.people_count ? x.people_count + " people" : "people not stated"}</span>
+        <i class="serif" style="font-size:13px">“${esc(x.quote)}”</i><br>${x.translation ? `<span style="font-size:12.5px"><b>In English:</b> ${esc(x.translation)}</span><br>` : ""}<a class="link" target="_blank" rel="noopener" href="https://www.openstreetmap.org/?mlat=${x.lat}&mlon=${x.lon}#map=17/${x.lat}/${x.lon}">Open map ↗</a></div>
+      <div><span class="lab">Status</span><select class="rst">${["new", "seen", "resolved"].map(s => `<option ${s === x.status ? "selected" : ""}>${s}</option>`).join("")}</select></div></div>`).join("") || "<p class='sub'>No reports yet.</p>";
+    $$(".rst").forEach(sel => sel.onchange = () => call("/api/admin/reports/" + sel.closest("[data-rid]").dataset.rid, "POST", { status: sel.value }).catch(e => LNG.toast(e.message)));
+  } catch (e) { $("#rlist").innerHTML = `<p class="error">${esc(e.message)}</p>`; }
+}
+async function loadAlerts() {
+  const d = await LNG.api("/api/feed"), mine = (d.alerts || []).filter(a => a.category === "rain_flood" || a.category === "local");
+  $("#alist").innerHTML = mine.map(a => `<div class="between" style="border-top:1px solid var(--line);padding:8px 0"><span><b>${esc(a.title)}</b> <span class="badge ${a.expired ? "expired" : a.level}">${a.expired ? "expired" : esc(a.level_label)}</span></span><button class="btn sm" data-del="${esc(a.id)}">Remove</button></div>`).join("");
+  $$("[data-del]").forEach(b => b.onclick = async () => { await call("/api/admin/alerts/" + b.dataset.del, "DELETE"); loadAlerts(); });
+}
+$("#a-post").onclick = async () => {
+  const body = { kind: $("#a-kind").value, level: $("#a-level").value, hours: $("#a-hours").value, title: $("#a-title").value, summary: $("#a-summary").value,
+    steps: $("#a-steps").value, source: $("#a-source").value, evac_order: $("#a-evac").checked };
+  try { await call("/api/admin/alerts", "POST", body); $("#a-msg").innerHTML = `<span class="ok">Posted</span>`; ["#a-title", "#a-summary", "#a-steps"].forEach(s => $(s).value = ""); loadAlerts(); }
+  catch (e) { $("#a-msg").innerHTML = `<span class="error">${esc(e.message)}</span>`; }
+};
+async function load() {
+  const cs = await LNG.api("/api/centers");
+  $("#list").innerHTML = cs.map(c => `<div class="crow" data-id="${c.id}">
+    <div class="nm">${esc(c.name)}<small>${c.lat.toFixed(5)}, ${c.lon.toFixed(5)}${c.sample ? " · sample" : ""}</small></div>
+    <div><span class="lab">People now</span><div class="occ"><button class="btn sm q" data-d="-10">−10</button><button class="btn sm q" data-d="-1">−1</button>
+      <input type="number" min="0" class="o" value="${c.occupied}"><button class="btn sm q" data-d="1">+1</button><button class="btn sm q" data-d="10">+10</button></div>
+      <div class="bar"><i style="width:${LNG.pct(c.occupied, c.capacity)}%"></i></div></div>
+    <div><span class="lab">Capacity</span><input type="number" min="0" class="cap" value="${c.capacity}"></div>
+    <div><span class="lab">Status</span><select class="st">${["open", "full", "closed", "unavailable"].map(s => `<option ${s === c.status ? "selected" : ""}>${s}</option>`).join("")}</select>
+      <label class="check" style="margin-top:6px;font-size:12px"><input type="checkbox" class="man" ${c.manual ? "checked" : ""}> Manual</label></div>
+    <div><button class="btn primary sm save">Save</button><br><button class="btn sm del" style="margin-top:6px">Remove</button><div class="msg" style="margin-top:6px"></div></div></div>`).join("") || "<p>No evacuation centers yet. Add one below.</p>";
+  $$(".crow").forEach(row => {
+    $$("[data-d]", row).forEach(b => b.onclick = () => { const o = $(".o", row); o.value = Math.max(0, (+o.value || 0) + +b.dataset.d); $(".man", row).checked = true; save(row); });
+    $(".save", row).onclick = () => save(row);
+    $(".del", row).onclick = () => remove(row);
+  });
+}
+async function remove(row) {
+  const btn = $(".del", row);
+  if (btn.dataset.confirm !== "1") { btn.dataset.confirm = "1"; btn.textContent = "Click again to remove"; setTimeout(() => { btn.dataset.confirm = ""; btn.textContent = "Remove"; }, 4000); return; }
+  try { await call("/api/centers/" + row.dataset.id, "DELETE"); load(); } catch (e) { $(".msg", row).innerHTML = `<span class="error">${esc(e.message)}</span>`; }
+}
+$("#add").onclick = async () => {
+  const body = { name: $("#n-name").value, lat: $("#n-lat").value, lon: $("#n-lon").value, capacity: $("#n-cap").value, status: $("#n-status").value,
+    contact: $("#n-contact").value, facilities: $$(".fac:checked").map(i => i.value) };
+  try { const d = await call("/api/admin/centers", "POST", body); ["#n-name", "#n-lat", "#n-lon", "#n-cap", "#n-contact"].forEach(s => $(s).value = ""); $$(".fac").forEach(i => i.checked = false);
+    $("#addmsg").innerHTML = `<span class="ok">Added “${esc(d.name)}”</span>`; load(); }
+  catch (e) { $("#addmsg").innerHTML = `<span class="error">${esc(e.message)}</span>`; }
+};
+async function save(row) {
+  const body = { occupied: +$(".o", row).value, capacity: +$(".cap", row).value, status: $(".st", row).value, manual: $(".man", row).checked };
+  try { const d = await call("/api/centers/" + row.dataset.id, "POST", body);
+    $(".o", row).value = d.occupied; $(".cap", row).value = d.capacity; $(".st", row).value = d.status; $(".bar i", row).style.width = LNG.pct(d.occupied, d.capacity) + "%";
+    $(".msg", row).innerHTML = `<span class="ok">Saved ${esc(d.updated)}</span>`; }
+  catch (e) { $(".msg", row).innerHTML = `<span class="error">${esc(e.message)}</span>`; }
+}
+if (key) signIn();
+})();
+</script>
+</body>
+</html>

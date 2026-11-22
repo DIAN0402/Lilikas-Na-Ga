@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alert preferences · Lilikas na ga?</title>
+<meta name="theme-color" content="#0e0709">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body>
+<main id="page" data-nav="alerts">
+  <a class="back" href="alerts.html"><i data-icon="arrowL"></i> Back to alerts</a>
+  <section class="sheet" id="edit">
+    <div class="head"><span class="ib"><i data-icon="sliders"></i></span><h1>Choose your alert preferences</h1>
+      <p>Pick the area and the kinds of alerts you want to see first. You can change these choices whenever you need to.</p></div>
+    <form class="body" id="form">
+      <div class="kv"><span>Selected area</span><span><span id="area"></span> · <button type="button" class="link" id="chg">Change</button></span></div>
+      <p style="font-weight:700;font-size:13px;margin:16px 0 8px">Hazard preferences</p>
+      <div class="stack" style="gap:10px" id="topics"></div>
+      <div class="actions"><button class="btn primary">Save preferences</button></div>
+    </form>
+  </section>
+  <section class="sheet" id="saved" hidden>
+    <div class="head"><span class="ib" style="background:var(--green)"><i data-icon="check"></i></span><h1>Your preferences are saved</h1>
+      <p>This shows your selected area and alert topics after saving. You can change these choices whenever you need to.</p></div>
+    <div class="body">
+      <div class="between" style="margin:6px 0 6px"><b>Your selections</b><button class="link" id="edit-btn">Edit preferences</button></div>
+      <div class="kv"><span>Selected area</span><span id="s-area"></span></div>
+      <div class="kv"><span>Hazard preferences</span><span id="s-topics" class="row" style="flex-wrap:wrap;gap:6px"></span></div>
+      <div class="notice ok" style="margin-top:8px"><i data-icon="checkCircle"></i><span>Included for your selected area</span></div>
+      <div class="card pad" style="margin-top:16px;box-shadow:none;border:1px solid var(--line)">
+        <div class="between"><b>Browser notifications <span id="n-sub">still need permission</span></b><span class="badge off" id="n-badge">Not enabled</span></div>
+        <p class="muted serif" style="font-size:12.5px;margin:8px 0 12px" id="n-text">One more choice, only if you want notifications. They work while this site is open in your browser and do not replace official channels.</p>
+        <div class="row" style="flex-wrap:wrap"><button class="btn primary" id="n-on"><i data-icon="bell"></i> Enable notifications</button><a class="btn" href="alerts.html" id="n-skip">Continue without them</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/shell.js"></script>
+<script src="assets/js/assist.js"></script>
+<script>
+(() => {
+  const { $, $$, esc, icon } = LNG;
+  const TOPICS = [["rain_flood", "waves", "Rain & flood"], ["earthquake", "quake", "Earthquake safety"], ["storm", "wind", "Storms"], ["local", "msg", "Local advice"]];
+  const u = LNG.user(), saved = LNG.store.get("alertPrefs", null);
+  let prefs = saved || { topics: (u && u.preferences.alert_topics) || ["rain_flood", "earthquake", "local"], notify: false };
+  const area = () => LNG.loc().label;
+  function edit() {
+    $("#edit").hidden = false; $("#saved").hidden = true; $("#area").textContent = area();
+    $("#topics").innerHTML = TOPICS.map(([k, ic, l]) => `<label class="check" style="border:1px solid var(--line);border-radius:10px;padding:11px 12px"><input type="checkbox" value="${k}" ${prefs.topics.includes(k) ? "checked" : ""}> ${icon(ic)} <b>${l}</b></label>`).join("");
+  }
+  function show() {
+    $("#edit").hidden = true; $("#saved").hidden = false; $("#s-area").textContent = area();
+    $("#s-topics").innerHTML = prefs.topics.map(k => { const t = TOPICS.find(x => x[0] === k); return `<span class="pill red">${icon(t[1])} ${esc(t[2])}</span>`; }).join("") || "None selected";
+    const perm = "Notification" in window ? Notification.permission : "unsupported", on = prefs.notify && perm === "granted";
+    $("#n-badge").textContent = on ? "Enabled" : perm === "denied" ? "Blocked" : "Not enabled"; $("#n-badge").className = "badge " + (on ? "ok" : "off");
+    $("#n-sub").textContent = on ? "are on" : "still need permission";
+    if (perm === "unsupported") { $("#n-text").textContent = "This browser does not support notifications. Check the Alerts page instead."; $("#n-on").hidden = true; }
+    if (perm === "denied") $("#n-text").textContent = "Notifications are blocked for this site. Allow them in your browser's site settings if you want them.";
+    $("#n-on").hidden = on || perm === "unsupported"; $("#n-skip").textContent = on ? "Back to alerts" : "Continue without them";
+  }
+  $("#form").onsubmit = e => {
+    e.preventDefault(); prefs.topics = $$("#topics input:checked").map(i => i.value); LNG.store.set("alertPrefs", prefs);
+    if (LNG.user()) LNG.api("/api/me/preferences", { method: "PUT", body: { alert_topics: prefs.topics, barangay: area() } }).then(d => LNG.setUser(d.user)).catch(() => {});
+    show();
+  };
+  $("#edit-btn").onclick = edit;
+  $("#chg").onclick = e => { e.stopPropagation(); window.scrollTo(0, 0); $("#loc-btn").click(); };
+  LNG.on("location", () => { $("#area").textContent = area(); $("#s-area").textContent = area(); });
+  $("#n-on").onclick = async () => {
+    const r = await Notification.requestPermission();
+    prefs.notify = r === "granted"; LNG.store.set("alertPrefs", prefs); show();
+    try { const d = await LNG.api("/api/feed"); LNG.store.set("notified", (d.alerts || []).map(a => a.id)); } catch {}   // only NEW alerts from now on
+    if (r === "granted") new Notification("Lilikas na ga?", { body: "Notifications are on. We will notify you about new alerts while the site is open." });
+  };
+  saved ? show() : edit();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+/* Lilikas Na Ga design tokens and shared components (from the Figma file "Lilikas na Ga?").
+   Fonts: Raleway (interface), Lora (body copy). Colours taken from the design's fills. */
+@import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Raleway:wght@500;600;700;800&display=swap");
+
+:root {
+  --red: #d32f2f;          /* primary buttons, risk accents */
+  --red-d: #b71c1c;
+  --red-ink: #9f1d1d;
+  --coral: #f0533a;        /* highlighted words in headings */
+  --coral-l: #ff6b5e;
+  --coral-xl: #ff8a7a;
+  --maroon: #7a1717;
+  --navy: #0b2545;         /* headings */
+  --slate: #5f7083;        /* secondary text */
+  --slate-l: #8a98a9;
+  --line: #f3e4e4;
+  --pink: #fdecec;         /* tinted panels */
+  --pink-hl: #f9d4d4;      /* label highlight behind card titles */
+  --pink-2: #f6dada;
+  --cream: #fff1e2;        /* logo badge */
+  --paper: #fbf7f6;
+  --yellow: #f6c453;
+  --amber-bg: #fff5de;
+  --amber: #936116;
+  --green: #237660;
+  --green-bg: #eaf6f0;
+  --gray-bg: #eceef2;
+  --gray: #59627a;
+  --dark: #0e0709;
+  --dark-2: #1a0c10;
+  --dark-3: #2a0e13;
+  --map-1: #dce4da;
+  --map-2: #d4e0d0;
+  --map-road: #cdd6e3;
+  --radius: 16px;
+  --shadow: 0 2px 18px rgb(122 23 23 / 7%);
+  --ui: "Raleway", "Segoe UI", system-ui, sans-serif;
+  --serif: "Lora", Georgia, serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; font-family: var(--ui); color: var(--navy); font-size: 14px; line-height: 1.45; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--coral-l); outline-offset: 2px; }
+.serif { font-family: var(--serif); }
+.muted { color: var(--slate); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.hl { color: var(--red); }
+.hl-coral { color: var(--coral-l); }
+.ic { width: 1.15em; height: 1.15em; flex: none; vertical-align: -0.2em; }
+
+/* ---------- buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 8px; padding: 10px 16px;
+  font-weight: 700; font-size: 13px; border: 1.5px solid var(--red); background: #fff; color: var(--red); text-decoration: none;
+  transition: background .15s, color .15s, box-shadow .15s; white-space: nowrap; }
+.btn:hover { background: var(--pink); }
+.btn.primary { background: var(--red); color: #fff; }
+.btn.primary:hover { background: var(--red-d); }
+.btn.dark { background: transparent; color: #fff; border-color: #ffffff4d; }
+.btn.dark:hover { background: #ffffff14; }
+.btn.white { background: #fff; color: var(--red); border-color: #fff; }
+.btn.ghost { border-color: transparent; background: transparent; padding-left: 4px; padding-right: 4px; }
+.btn.block { width: 100%; }
+.btn.lg { padding: 13px 20px; font-size: 14px; }
+.btn.sm { padding: 6px 10px; font-size: 12px; }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+.link { background: none; border: 0; padding: 0; color: var(--red); font-weight: 700; text-decoration: none; display: inline-flex; gap: 6px; align-items: center; }
+.link:hover { text-decoration: underline; }
+
+/* ---------- cards and labels */
+.card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); }
+.pad { padding: 18px 20px; }
+.label { display: inline-flex; align-items: center; gap: 6px; background: var(--pink-hl); color: var(--navy); font-weight: 800;
+  font-size: 15px; padding: 3px 9px; border-radius: 6px; margin: 0; }
+.label.lg { font-size: 21px; padding: 3px 10px; }
+.kicker { font-size: 11px; font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: .04em; }
+
+/* ---------- status badges (centers, alerts) */
+.badge { display: inline-flex; align-items: center; gap: 5px; font-size: 9.5px; font-weight: 800; letter-spacing: .05em;
+  padding: 4px 9px; border-radius: 999px; text-transform: uppercase; background: var(--pink); color: var(--red-ink); }
+.badge.open, .badge.ok { background: var(--green-bg); color: var(--green); }
+.badge.full, .badge.high { background: var(--pink); color: var(--red-ink); }
+.badge.closed, .badge.expired, .badge.off { background: var(--gray-bg); color: var(--gray); }
+.badge.unavailable, .badge.advisory, .badge.warn { background: var(--amber-bg); color: var(--amber); }
+.badge.info { background: #e8eefc; color: #2b4a9a; }
+
+.pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 5px 12px; font-size: 12px;
+  font-weight: 600; border: 1px solid var(--line); background: #fff; color: var(--navy); }
+a.pill, a.label { text-decoration: none; }
+.pill.red { background: var(--pink); border-color: #f2a7a7; color: var(--red); }
+
+/* ---------- forms */
+.field { display: grid; gap: 6px; margin-bottom: 14px; }
+.field > span { font-size: 12px; font-weight: 700; }
+.input { width: 100%; border: 1px solid #e3d6d6; border-radius: 8px; padding: 10px 12px; background: #fff; font-size: 13px; }
+.input:focus { border-color: var(--red); outline: none; box-shadow: 0 0 0 3px rgb(211 47 47 / 15%); }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--red); margin: 1px 0 0; flex: none; }
+.error { color: var(--red-d); font-weight: 700; font-size: 12.5px; }
+.notice { display: flex; gap: 10px; align-items: flex-start; border-radius: 10px; padding: 11px 14px; font-size: 12.5px;
+  background: var(--pink); color: var(--navy); border: 1px solid #f2c4c4; }
+.notice.warn { background: var(--amber-bg); border-color: #f0d9a0; color: #5c3d06; }
+.notice.ok { background: var(--green-bg); border-color: #bfe3d2; color: #12503f; }
+
+/* ---------- toggle */
+.switch { position: relative; width: 42px; height: 24px; flex: none; display: inline-block; }
+.switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 1; }
+.switch i { position: absolute; inset: 0; border-radius: 99px; background: #d9c6c6; transition: .2s; }
+.switch i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: .2s; }
+.switch input:checked + i { background: var(--red); }
+.switch input:checked + i::after { left: 21px; }
+
+/* ---------- toast */
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 10px 16px;
+  border-radius: 10px; font-size: 13px; z-index: 9000; box-shadow: 0 8px 30px #0004; max-width: min(90vw, 520px); }
+
+/* ---------- skeleton */
+.skel { background: linear-gradient(90deg, #f5e9e9 25%, #fbf3f3 37%, #f5e9e9 63%); background-size: 400% 100%;
+  animation: skel 1.4s ease infinite; border-radius: 8px; min-height: 14px; }
+@keyframes skel { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* ---------- logo (image from Figma, with a text badge fallback) */
+.brand { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+.brand img { height: 34px; width: auto; }
+a:has(> .brand-wrap) { text-decoration: none; }
+.badge-text { background: var(--cream); color: var(--maroon); border: 2px solid var(--maroon); border-radius: 6px;
+  font-weight: 800; font-size: 13px; padding: 3px 8px; box-shadow: 2px 2px 0 var(--maroon); white-space: nowrap; }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Check your location message · Lilikas na ga?</title>
+<meta name="theme-color" content="#0e0709">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body>
+<main id="page" data-nav="prep">
+  <a class="back" href="preparedness.html#share"><i data-icon="arrowL"></i> Back to preparedness & help</a>
+  <section class="sheet">
+    <div class="head"><span class="ib"><i data-icon="send"></i></span><h1>Check your location message</h1>
+      <p>Review what you want to share and how. Nothing has been copied or sent, and no one has received your location.</p>
+      <div class="row" style="margin-top:12px;flex-wrap:wrap"><span class="badge off" id="state">Not shared</span><span class="badge high" id="kind">Manually selected area</span></div></div>
+    <div class="body">
+      <div class="kv"><span>Location</span><span><span id="loc"></span><br><small class="muted serif" id="loc-note"></small></span></div>
+      <div class="kv"><span>Sharing method</span><span>Copy location message<br><small class="muted serif">You paste it into your chosen messaging app</small></span></div>
+      <div class="kv"><span>Recipient</span><span>A trusted person you choose</span></div>
+      <div class="kv"><span>Included</span><span id="included"></span></div>
+      <label class="field" style="margin-top:14px"><span>Message preview</span><textarea class="input serif" id="msg" rows="4" maxlength="500"></textarea></label>
+      <div class="notice" style="background:var(--red);color:#fff;border-color:var(--red)"><i data-icon="info"></i><div><b style="display:block">You choose who receives it</b><span class="serif">Confirming copies the message, it does not send it. Check the recipient before pasting or sending. Anyone you send it to could forward it; after sending, control depends on your messaging app. Nothing is sent to responders.</span></div></div>
+      <div class="row" style="margin-top:16px;flex-wrap:wrap"><button class="btn primary" id="copy"><i data-icon="copy"></i> Confirm & copy message</button><button class="btn" id="native" hidden><i data-icon="send"></i> Share with an app…</button><a class="btn ghost" href="preparedness.html#share">Cancel</a></div>
+    </div>
+  </section>
+</main>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/shell.js"></script>
+<script src="assets/js/assist.js"></script>
+<script>
+(() => {
+  const { $ } = LNG, l = LNG.loc(), dev = l.source === "device";
+  $("#loc").textContent = l.label;
+  $("#loc-note").textContent = dev ? "From your device location (approximate)" : "Selected area, not a GPS position";
+  $("#kind").textContent = dev ? "Device location" : "Manually selected area";
+  $("#included").textContent = dev ? "Area name and a map link with coordinates" : "Barangay and city name as plain text";
+  $("#msg").value = dev
+    ? `I am near ${l.label}. Map: https://www.google.com/maps?q=${l.lat},${l.lon} (approximate, not live). Please contact me to confirm where I am.`
+    : `My selected area is ${l.label}. This is a manually selected area, not my precise or live location. Please contact me to confirm where I am.`;
+  if (navigator.share) $("#native").hidden = false;
+  const done = () => { $("#state").textContent = "Copied, not sent"; $("#state").className = "badge ok"; };
+  $("#copy").onclick = async () => {
+    try { await navigator.clipboard.writeText($("#msg").value); done(); LNG.toast("Copied. Paste it into your messaging app and check the recipient."); }
+    catch { $("#msg").select(); LNG.toast("Select the message and copy it (Ctrl/Cmd + C)."); }
+  };
+  $("#native").onclick = async () => { try { await navigator.share({ text: $("#msg").value }); done(); } catch { /* cancelled */ } };
+})();
+</script>
+</body>
+</html>

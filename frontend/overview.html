@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview · Lilikas na ga?</title>
+<meta name="theme-color" content="#0e0709">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body>
+<main id="page" data-nav="overview">
+  <div class="page-head greet">
+    <div><h1><span id="greet" data-i18n>Magandang araw</span><span id="greet-name"></span></h1>
+      <p id="greet-sub">Here's your risk snapshot and the next steps you can take.</p></div>
+    <button class="btn" id="change-loc"><i data-icon="pin"></i><span data-i18n>Change location</span></button>
+  </div>
+
+  <div class="grid-2">
+    <section class="risk" id="risk" data-level="" aria-live="polite">
+      <div class="skel" style="height:40px;width:60%;background:#ffffff14"></div>
+    </section>
+    <section class="card pad rain" id="rain">
+      <div class="between"><h2 class="label" data-i18n>Rainfall outlook</h2><span class="iconbtn" style="width:30px;height:30px;border:0;background:var(--pink);color:var(--red)"><i data-icon="rain"></i></span></div>
+      <div id="rain-body"><div class="skel" style="height:120px;margin-top:14px"></div></div>
+    </section>
+
+    <section class="card pad">
+      <div class="between"><h2 class="label" data-i18n>Your area at a glance</h2><a class="pill red" href="map.html">Open full map <i data-icon="ext"></i></a></div>
+      <div class="map" id="mini-map" style="margin-top:14px;height:240px"></div>
+      <div class="legend"><span><i style="background:#4f8fd0"></i>Flood susceptibility</span><span><i style="background:#237660;border-radius:50%"></i>Evacuation center</span><span><i style="background:#d32f2f;border-radius:50%"></i>Your location</span></div>
+    </section>
+    <section class="card pad">
+      <div class="between"><h2 class="label" data-i18n>Picked for you</h2><button class="pill red" data-assist-open><i data-icon="sparkle"></i> Assist</button></div>
+      <div style="margin-top:6px">
+        <a class="navcard" href="preparedness.html"><span class="ib"><i data-icon="bag"></i></span><span><b>Get your go bag ready</b><small>Pack water, medicine, a flashlight and essential documents.</small></span><i data-icon="right" class="go"></i></a>
+        <a class="navcard" href="map.html"><span class="ib"><i data-icon="home"></i></span><span><b>Review evacuation options</b><small id="pick-center">Check availability, facilities and official advice before travelling.</small></span><i data-icon="right" class="go"></i></a>
+        <a class="navcard" href="alerts.html"><span class="ib"><i data-icon="bell"></i></span><span><b>Keep official alerts in view</b><small>Review advisories and choose notification preferences.</small></span><i data-icon="right" class="go"></i></a>
+      </div>
+      <a class="btn block" href="preparedness.html" style="margin-top:8px">Open preparedness checklist</a>
+    </section>
+
+    <section class="card pad" id="why">
+      <h2 class="label" data-i18n>Why this risk level?</h2>
+      <div class="why-chips" id="why-chips"></div>
+      <p class="why-text" id="why-text">This level combines hazard and rainfall inputs. AI explains the evidence; it does not issue evacuation orders.</p>
+    </section>
+    <section class="card pad">
+      <h2 class="label" data-i18n>Official advice comes first</h2>
+      <a class="official" href="alerts.html" id="official"><i data-icon="msg"></i><span id="official-text">See how an advisory would appear for your area.</span></a>
+      <a class="link" href="alerts.html">View alerts <i data-icon="arrowR"></i></a>
+    </section>
+  </div>
+</main>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/shell.js"></script>
+<script src="assets/vendor/leaflet/leaflet.js"></script>
+<script src="assets/js/mapkit.js"></script>
+<script src="assets/js/assist.js"></script>
+<script src="assets/js/pages/overview.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preparedness &amp; emergency help · Lilikas na ga?</title>
+<meta name="theme-color" content="#0e0709">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body>
+<main id="page" data-nav="prep">
+  <div class="page-head"><div><h1 data-i18n>Preparedness & emergency help</h1><p>Get the essentials ready. Know who to contact and what to share.</p></div>
+    <div class="count"><small>CHECKLIST</small><b>6</b><small>key steps</small></div></div>
+
+  <section class="card danger"><span class="ib"><i data-icon="phone"></i></span>
+    <div><b>In immediate danger? Call emergency services directly.</b><span>This website does not dispatch responders or monitor requests for help.</span></div>
+    <a class="btn primary" href="tel:911"><i data-icon="phone"></i> <span data-i18n>Call 911</span></a></section>
+
+  <div class="grid-2">
+    <div class="stack">
+      <section class="card pad" id="checklist">
+        <h2 class="label" data-i18n>Your household checklist</h2>
+        <div class="between" style="margin-top:12px"><span class="muted serif" style="font-size:12.5px">Start with these six practical steps.</span><span class="pill" id="done-count">0 of 6 complete</span></div>
+        <div class="progress" id="progress"></div>
+        <div id="tasks"></div>
+        <div class="row no-print" style="margin-top:14px;flex-wrap:wrap"><button class="btn" id="dl"><i data-icon="download"></i> Download checklist</button><button class="btn" id="print"><i data-icon="printer"></i> Print safety plan</button></div>
+        <p class="muted" id="sync-note" style="font-size:11.5px;margin:10px 0 0"></p>
+      </section>
+      <section class="card" style="overflow:hidden">
+        <div class="qa"><i data-icon="sparkle"></i> <span data-i18n>Understand your risk</span></div>
+        <div class="pad" id="faq"></div>
+      </section>
+    </div>
+    <div class="stack">
+      <section class="card pad" id="contacts">
+        <h2 class="label" data-i18n>Emergency contacts</h2>
+        <div style="margin-top:14px">
+          <div class="contact hot"><div><b>National emergency hotline</b><br><small class="muted">Philippines · For urgent emergencies</small></div><a class="num" href="tel:911">911</a></div>
+          <div class="contact"><span>Batangas City disaster office (CDRRMO)</span><span class="badge off">Not provided</span></div>
+          <div class="contact"><span>Barangay assistance desk</span><span class="badge off">Not provided</span></div>
+          <div class="notice" style="margin-top:4px"><i data-icon="msg"></i><span class="serif">Tell the operator your location, what happened and what help is needed.</span></div>
+        </div>
+      </section>
+      <section class="card pad" id="share">
+        <h2 class="label" data-i18n>Share your location safely</h2>
+        <div style="margin:12px 0"><span class="badge warn"><i data-icon="lock"></i> <span id="perm">Permission not granted</span></span></div>
+        <p class="muted serif" style="font-size:12.5px;margin:0 0 12px">Choose to create a location message for someone you trust. Nothing is shared automatically or sent to responders.</p>
+        <div class="pill red" style="margin-bottom:10px" id="share-loc"><i data-icon="pin"></i> Manual selection</div>
+        <button class="btn block" id="use-device"><i data-icon="locate"></i> Use device location</button>
+        <label class="check" style="margin:14px 0"><input type="checkbox" id="consent"> <span class="serif">I choose to include my location in a message. I will review it and choose who receives it.</span></label>
+        <a class="btn primary block" id="create-msg" aria-disabled="true" href="share.html">Create message · Consent required</a>
+      </section>
+    </div>
+  </div>
+</main>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/shell.js"></script>
+<script src="assets/js/assist.js"></script>
+<script src="assets/js/pages/preparedness.js"></script>
+</body>
+</html>
