@@ -1,7 +1,7 @@
 """The ONE place that knows where backend files live and how the backend is configured.
 
     backend/            Flask JSON API, business rules, outside-service clients (this folder)
-    backend/data/       hazard maps and the JSON files the API reads and writes
+    backend/data/       hazard maps, reference JSON and the database file (lilikas.db)
     frontend/           the website (separate folder, talks to this API over HTTP)
 
 Application code must take file locations from here, never build its own paths.
@@ -15,17 +15,18 @@ ROOT = Path(__file__).resolve().parent          # backend/
 DATA_DIR = ROOT / "data"
 GEO_DIR = DATA_DIR / "geo"          # full-detail hazard maps (read-only source data)
 LAYERS_DIR = DATA_DIR / "layers"    # light map layers built by build_layers.py
-STORES_DIR = DATA_DIR / "stores"    # JSON the app reads and writes while running (no database yet)
+STORES_DIR = DATA_DIR / "stores"    # reference JSON (guides, starting centers) and old JSON stores to import
+DB_PATH = DATA_DIR / "lilikas.db"   # the database (see db.py); DB_PATH in .env moves it
 
 BOUNDARY_PATH = GEO_DIR / "batangas_city_boundary.geojson"
 FLOOD_PATH = GEO_DIR / "batangas_city_flood_hazard.geojson"
 LANDSLIDE_PATH = GEO_DIR / "batangas_city_landslide_hazard.geojson"
 FAULT_PATH = GEO_DIR / "batangas_active_faults.geojson"
 
-CENTERS_PATH = STORES_DIR / "evacuation_centers.json"
+CENTERS_PATH = STORES_DIR / "evacuation_centers.json"   # starting list, copied into the database on first run
 GUIDES_PATH = STORES_DIR / "guides.json"
-ALERTS_PATH = STORES_DIR / "alerts.json"
-REPORTS_PATH = STORES_DIR / "reports.json"
+ALERTS_PATH = STORES_DIR / "alerts.json"      # old store: imported into the database once, if present
+REPORTS_PATH = STORES_DIR / "reports.json"    # old store: imported into the database once, if present
 
 
 def load_env_file(path=ROOT / ".env"):

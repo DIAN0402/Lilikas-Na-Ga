@@ -20,7 +20,7 @@ if ! grep -Eq '^(AI_API_KEY|NVIDIA_API_KEY)=[^#[:space:]]{8,}' backend/.env; the
   echo
   echo "Lilikas Assist needs an AI key for translation and smart reports."
   echo "Get a free NVIDIA key at https://build.nvidia.com (it starts with nvapi-)."
-  read -r -p "Paste your key here (or press Enter to skip for now): " KEY
+  read -r -t 20 -p "Paste your key here (or press Enter to skip; skips by itself in 20 s): " KEY || { KEY=""; echo; echo "Skipped for now."; }
   if [ -n "$KEY" ]; then
     KEY="$KEY" backend/.venv/bin/python - <<'PY'
 import os, re, pathlib
@@ -53,14 +53,32 @@ BACK=$!
 FRONT=$!
 trap 'echo; echo "Stopping…"; kill $BACK $FRONT 2>/dev/null; exit 0' INT TERM
 
-sleep 3
+# Wait until the backend answers (loading the hazard maps and connecting to the database takes a few seconds)
 echo
+printf "Starting the backend"
+READY=""
+for i in $(seq 1 60); do
+  if curl -s -m 2 -o /dev/null "http://127.0.0.1:5000/api/health"; then READY=1; break; fi
+  if ! kill -0 $BACK 2>/dev/null; then break; fi            # the backend stopped: its error is printed above
+  printf "."; sleep 1
+done
+echo
+if [ -z "$READY" ]; then
+  echo "  The backend did not start. Look at the error above, fix it, then double-click start.command again."
+  echo "  (Press Enter to close.)"; read -r; kill $BACK $FRONT 2>/dev/null; exit 1
+fi
 echo "Testing the AI…"
 curl -s -m 40 "http://127.0.0.1:5000/api/assist/ai?check=1" | backend/.venv/bin/python -c "import json,sys
 try:
     d=json.load(sys.stdin); c=d.get('check') or {}
-    print('  AI: WORKING (%s, %s ms)' % (d.get('model'), c.get('ms')) if c.get('ok') else '  AI: NOT WORKING - %s' % c.get('error'))
-except Exception as e: print('  AI: could not check (%s)' % e)"
+    if not d.get('enabled'):
+        print('  AI: OFF - no key yet. Add AI_API_KEY to backend/.env, then restart. Simple rules are used meanwhile.')
+    elif c.get('ok'):
+        print('  AI: WORKING (%s, %s ms)' % (d.get('model'), c.get('ms')))
+    else:
+        print('  AI: NOT WORKING - %s' % (c.get('error') or d.get('last_error') or 'no answer from the AI service'))
+except Exception:
+    print('  AI: could not check (the backend did not answer the AI test)')"
 echo "  Website:  http://localhost:5173"
 echo "  API:      http://127.0.0.1:5000/api/health"
 echo "  Staff:    http://localhost:5173/admin.html   (admin key is printed above)"

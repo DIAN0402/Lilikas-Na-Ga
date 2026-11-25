@@ -1,11 +1,8 @@
-"""Accounts (optional sign-in) and saved preferences.
-
-NO DATABASE YET: accounts and sessions live in memory and are lost when the server restarts. This keeps the
-sign-up / log-in screens working end to end while the database is decided. Replace the USERS / SESSIONS dicts
-with database tables later; the routes and the shapes they return can stay the same.
+"""Accounts (optional sign-in) and saved preferences, kept in the database (db.py: users, sessions).
 
 Passwords are stored as salted PBKDF2-SHA256 hashes, never as text. Sessions are random bearer tokens that the
-website sends in the  Authorization: Bearer <token>  header.
+website sends in the  Authorization: Bearer <token>  header; the database keeps only a SHA-256 hash of each token.
+Accounts and sign-ins survive a server restart.
 """
 import hashlib
 import hmac
@@ -13,13 +10,15 @@ import re
 import secrets
 import threading
 import time
+from datetime import datetime, timedelta, timezone
 
 from flask import jsonify, request
 
+import db
+
 LOCK = threading.Lock()
-USERS = {}          # contact (lower-case email or 09xxxxxxxxx) -> user dict
-SESSIONS = {}       # token -> (contact, expires_at)
-_attempts = {}      # ip -> [timestamps] of failed log-ins
+_attempts = {}      # ip -> [timestamps] of failed log-ins (in memory on purpose: it only needs to last minutes)
+PHT = timezone(timedelta(hours=8))
 
 SESSION_HOURS = 12
 REMEMBER_DAYS = 30
@@ -54,26 +53,60 @@ def public(u):
             "initials": "".join(p[0] for p in u["name"].split()[:2]).upper(), "preferences": u["preferences"]}
 
 
+# ---- database access (the only place that knows the users / sessions tables)
+def _row_to_user(row):
+    return row and {"id": row["id"], "name": row["name"], "contact": row["contact"], "password": row["password"],
+                    "preferences": db.loads(row["preferences"], {})}
+
+
+def find_user(contact):
+    return _row_to_user(db.one("SELECT * FROM users WHERE contact = ?", (contact,)))
+
+
+def create_user(name, contact, password_hash, preferences):
+    """The new user, or None if that email/number is already registered."""
+    user = {"id": secrets.token_hex(6), "name": name, "contact": contact, "password": password_hash,
+            "preferences": preferences}
+    try:
+        with db.tx() as con:
+            con.execute("INSERT INTO users (id, contact, name, password, preferences, created) VALUES (?, ?, ?, ?, ?, ?)",
+                        (user["id"], contact, name, password_hash, db.dumps(preferences), datetime.now(PHT).isoformat()))
+    except db.IntegrityError:
+        return None
+    return user
+
+
+def save_preferences(user_id, preferences):
+    with db.tx() as con:
+        con.execute("UPDATE users SET preferences = ? WHERE id = ?", (db.dumps(preferences), user_id))
+
+
+def _token_hash(token):
+    return hashlib.sha256(token.encode()).hexdigest()
+
+
+def _bearer():
+    auth = request.headers.get("Authorization", "")
+    return auth[7:].strip() if auth.lower().startswith("bearer ") else ""
+
+
 def current_user():
     """The signed-in user for this request, or None (signing in is optional everywhere)."""
-    auth = request.headers.get("Authorization", "")
-    token = auth[7:].strip() if auth.lower().startswith("bearer ") else ""
-    with LOCK:
-        hit = SESSIONS.get(token)
-        if not hit:
-            return None
-        contact, expires = hit
-        if expires < time.time():
-            SESSIONS.pop(token, None)
-            return None
-        return USERS.get(contact)
+    token = _bearer()
+    if not token:
+        return None
+    row = db.one("SELECT u.* FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND s.expires > ?",
+                 (_token_hash(token), time.time()))
+    return _row_to_user(row)
 
 
-def _start_session(contact, remember):
+def _start_session(user, remember):
     token = secrets.token_urlsafe(32)
     ttl = REMEMBER_DAYS * 86400 if remember else SESSION_HOURS * 3600
-    with LOCK:
-        SESSIONS[token] = (contact, time.time() + ttl)
+    with db.tx() as con:
+        con.execute("DELETE FROM sessions WHERE expires < ?", (time.time(),))       # tidy up old sign-ins
+        con.execute("INSERT INTO sessions (token_hash, user_id, expires) VALUES (?, ?, ?)",
+                    (_token_hash(token), user["id"], time.time() + ttl))
     return token, ttl
 
 
@@ -125,15 +158,12 @@ def init_app(app):
             return jsonify(error="Use a password with at least 8 characters."), 400
         if not b.get("agree"):
             return jsonify(error="Please agree to the Terms and Privacy Policy."), 400
-        with LOCK:
-            if contact in USERS:
-                return jsonify(error="An account with this email or number already exists. Log in instead."), 409
-            USERS[contact] = {"id": secrets.token_hex(6), "name": name, "contact": contact,
-                              "password": hash_password(password),
-                              "preferences": clean_preferences(b, {"barangay": None, "alert_topics": ["rain_flood", "earthquake", "local"],
-                                                                    "checklist": [], "lang": "en"})}
-            user = USERS[contact]
-        token, ttl = _start_session(contact, bool(b.get("remember")))
+        prefs = clean_preferences(b, {"barangay": None, "alert_topics": ["rain_flood", "earthquake", "local"],
+                                      "checklist": [], "lang": "en"})
+        user = create_user(name, contact, hash_password(password), prefs)
+        if not user:
+            return jsonify(error="An account with this email or number already exists. Log in instead."), 409
+        token, ttl = _start_session(user, bool(b.get("remember")))
         return jsonify(token=token, expires_in=ttl, user=public(user)), 201
 
     @app.post("/api/auth/login")
@@ -143,19 +173,19 @@ def init_app(app):
             return jsonify(error="Too many tries. Wait 15 minutes, or continue as a guest."), 429
         b = request.get_json(silent=True) or {}
         contact = normalize_contact(b.get("contact"))
-        with LOCK:
-            user = USERS.get(contact) if contact else None
+        user = find_user(contact) if contact else None
         if not user or not check_password(str(b.get("password") or ""), user["password"]):
             _record_failure(ip)
             return jsonify(error="That email/number and password do not match."), 401
-        token, ttl = _start_session(contact, bool(b.get("remember")))
+        token, ttl = _start_session(user, bool(b.get("remember")))
         return jsonify(token=token, expires_in=ttl, user=public(user))
 
     @app.post("/api/auth/logout")
     def api_logout():
-        auth = request.headers.get("Authorization", "")
-        with LOCK:
-            SESSIONS.pop(auth[7:].strip(), None)
+        token = _bearer()
+        if token:
+            with db.tx() as con:
+                con.execute("DELETE FROM sessions WHERE token_hash = ?", (_token_hash(token),))
         return jsonify(ok=True)
 
     @app.get("/api/auth/me")
@@ -168,6 +198,6 @@ def init_app(app):
         user = current_user()
         if not user:
             return jsonify(error="not signed in"), 401
-        with LOCK:
-            user["preferences"] = clean_preferences(request.get_json(silent=True) or {}, user["preferences"])
+        user["preferences"] = clean_preferences(request.get_json(silent=True) or {}, user["preferences"])
+        save_preferences(user["id"], user["preferences"])
         return jsonify(user=public(user))

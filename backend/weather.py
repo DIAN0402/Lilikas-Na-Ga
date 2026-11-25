@@ -1,4 +1,5 @@
-"""Rainfall and the combined rain + flood risk shown on the dashboard.
+"""Rainfall outlook for the Overview screen (/api/weather): rain class now, next-24h total, and a 7-day past + 7-day
+forecast of daily rain, plus a simple rain + flood risk.
 
 Weather comes from Open-Meteo (https://open-meteo.com/en/docs), a free, no-key forecast API. It is model data
 (past days are archived model output, not rain-gauge readings), so the UI should say "model data".
@@ -21,7 +22,7 @@ from datetime import datetime, timedelta, timezone
 from flask import jsonify, request
 
 OPEN_METEO_URL = os.environ.get("OPEN_METEO_URL", "https://api.open-meteo.com/v1/forecast")
-USER_AGENT = "BatangasHazardApp/1.0"
+USER_AGENT = "LilikasNaGa/2.0 (weather)"
 CACHE_SECONDS = 600          # weather changes slowly; also keeps us far below the free API's limits
 PAST_DAYS, FORECAST_DAYS = 7, 7
 

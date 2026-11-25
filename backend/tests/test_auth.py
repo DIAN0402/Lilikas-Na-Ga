@@ -2,9 +2,7 @@ import auth
 
 
 def setup_function():
-    auth.USERS.clear()
-    auth.SESSIONS.clear()
-    auth._attempts.clear()
+    auth._attempts.clear()        # each test already gets a fresh empty database (conftest.py)
 
 
 def test_signup_login_me_preferences_logout(client):

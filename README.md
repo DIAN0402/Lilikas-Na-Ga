@@ -14,9 +14,11 @@ Lilikas-Na-Ga/
 │   ├── ai_client.py    the AI model client (any OpenAI-compatible provider)
 │   ├── assist.py       Lilikas Assist: guide picking, report drafting, explanations, citizen reports
 │   ├── overview.py     the Overview risk snapshot (/api/overview)
-│   ├── auth.py         optional accounts + saved preferences (in memory, no database yet)
+│   ├── weather.py      rainfall outlook from Open-Meteo, free, no key (/api/weather)
+│   ├── auth.py         optional accounts + saved preferences (stored in the database)
+│   ├── db.py           the database: one SQLite file, tables created automatically
 │   ├── hazard.py  batangas_risk.py  centers.py  routing.py  alerts.py  geo.py  build_layers.py
-│   ├── data/           hazard maps (geo/), light map layers (layers/), JSON stores (stores/)
+│   ├── data/           hazard maps (geo/), map layers (layers/), guides + starting centers (stores/), lilikas.db
 │   ├── tests/          pytest suite (no network needed)
 │   └── .env.example
 └── frontend/           the website (plain HTML/CSS/JS, no build step)
@@ -70,7 +72,7 @@ cd backend
 pip install -r requirements.txt -r requirements-dev.txt
 python -m pytest -q
 ```
-Tests need no network and never write to `data/stores/`.
+Tests need no network, never write to `data/stores/`, and use a fresh temporary database (never `lilikas.db`).
 
 ## Lilikas Assist and the AI
 `ai_client.py` talks to any OpenAI-compatible chat API. Set in `backend/.env`:
@@ -97,6 +99,7 @@ On the website, Assist also works with no signal: reports are kept in an on-devi
 |---|---|
 | `GET /api/health` | Backend, AI and alert-feed status |
 | `GET /api/overview?lat&lon` | Risk level, rainfall (3 h + 7-day history/forecast), evacuation order, top alert, picked guides |
+| `GET /api/weather?lat&lon` | Rain class now (No rain → Torrential), heaviest recent hour, next-24 h total, 7 days back + 7 ahead (Open-Meteo model data, not official PAGASA warnings) |
 | `GET /api/assess?lat&lon[&hazards=flood,landslide,fault]` | Hazard levels at a point |
 | `GET /api/locate?q=` | Place name or `"lat, lon"` to coordinates |
 | `GET /api/centers` | Centers with live numbers and hazard suitability |
@@ -108,12 +111,42 @@ On the website, Assist also works with no signal: reports are kept in an on-devi
 | `GET /layers/<name>.json` | Light map layers for the website |
 | Admin (header `X-Admin-Key`): `POST /api/centers/<id>`, `POST /api/admin/centers`, `DELETE /api/centers/<id>`, `POST /api/sim`, `POST /api/admin/alerts`, `DELETE /api/admin/alerts/<id>`, `GET /api/admin/reports`, `POST /api/admin/reports/<id>`, `GET /api/admin/assist/status`, `GET /api/admin/check` | Staff actions |
 
+## Database
+Same tables, two ways to run them:
+
+- **Neon (shared, online PostgreSQL)** — used when `DATABASE_URL` is set in `backend/.env`. Everyone on the team and
+  the live site see the same accounts, reports, alerts and centers. Get the address from the Neon console:
+  project **lilikas-na-ga** → **Connect** → copy the connection string, then add one line to `backend/.env`:
+  `DATABASE_URL=postgresql://…` (it contains a password: **never** put it in GitHub, the README or `.env.example`;
+  send it to teammates privately).
+- **SQLite (local file)** — used when `DATABASE_URL` is not set: `backend/data/lilikas.db`, created automatically.
+  Handy for working offline. Tests always use a fresh temporary SQLite file, never Neon or `lilikas.db`.
+
+The backend's first line on start says which one it is using (`Database: Neon / PostgreSQL at …` or
+`Database: SQLite file …`), and `/api/health` shows `"database": "postgresql"` or `"sqlite"`.
+
+| Table | What it holds |
+|---|---|
+| `users` | Accounts: name, email or mobile number, password **hash** (never the password), saved preferences |
+| `sessions` | Sign-ins (only a hash of each token is stored) |
+| `reports` | Reports sent through Lilikas Assist |
+| `alerts` | Earthquake alerts picked up and alerts posted by staff |
+| `centers` | Evacuation centers with their latest numbers |
+
+- **First run on an empty database:** the starting centers in `data/stores/evacuation_centers.json` are copied in.
+  Old `data/stores/reports.json` / `alerts.json` files, if any, are imported once (the files stay as a backup).
+- **Personal data:** names, numbers, locations and health details. `lilikas.db` is git-ignored; keep the Neon
+  password private, and give the Neon project only to people who need it.
+- **Look inside:** Neon console → **Tables**; for SQLite, Android Studio's Database tool window or DB Browser for SQLite.
+- **Start over (SQLite):** stop the backend and delete `backend/data/lilikas.db` (plus `-wal` / `-shm` next to it).
+- All SQL is in `db.py` and small store functions in `auth.py`, `assist.py`, `alerts.py` and `centers.py`.
+
 ## How things work
 See `frontend/methodology.html` (also linked in the app footer) for the hazard tiers, the Overview risk rule, the
 route scoring, the alert sources and the privacy notes.
 
 ## Not done yet / before real use
-- **Database.** Accounts and sessions are kept in memory (they reset when the backend restarts); reports, alerts and centers are JSON files in `backend/data/stores/`. Replace these with a database; the API shapes can stay the same.
+- **Database care.** Neon's free plan has limits (storage, compute hours). Before real use: backups, a plan to delete old reports, and separate Neon branches for testing vs. the live site.
 - Google / Facebook / Mobile OTP sign-in and password reset need those services; the buttons say so.
 - Guides in `guides.json` are draft advice. Have the CDRRMO review them and set `"verified": true`.
 - Evacuation centers are **sample data** and capacity is simulated (`centers.py`).

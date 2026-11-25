@@ -30,13 +30,14 @@ from shapely.geometry import Point, Polygon
 
 import batangas_risk as br
 from geo import haversine_km
+import db
 from settings import ALERTS_PATH
 
 PHT = timezone(timedelta(hours=8))   # PHIVOLCS times are Philippine Time
 USER_AGENT = "BatangasHazardApp/1.0"
 ACTIVE_HOURS = 24                    # earthquake alerts expire after this long
 LOCK = threading.Lock()
-ALERTS = []                          # earthquake + staff alerts, newest first (persisted to ALERTS_PATH)
+ALERTS = []                          # earthquake + staff alerts, newest first (saved in the database, table `alerts`)
 
 LEVEL_LABELS = {"high": "HIGH · PREPARE", "advisory": "ADVISORY"}
 EQ_STEPS = [
@@ -327,18 +328,30 @@ def refresh_storms():
 # ======================================================================
 # Storage, the combined feed, background checks and routes
 # ======================================================================
+ALERTS_KEPT = 200
+
+
+def _write_all(con, rows):
+    unique = {}
+    for a in rows:
+        if a.get("id") and a["id"] not in unique:          # newest first, so the first copy of an id wins
+            unique[a["id"]] = a
+    con.execute("DELETE FROM alerts")
+    con.executemany("INSERT INTO alerts (id, time, data) VALUES (?, ?, ?)",
+                    [(a["id"], a.get("time") or "", db.dumps(a)) for a in unique.values()])
+
+
 def _load():
-    try:
-        rows = json.loads(ALERTS_PATH.read_text("utf-8"))
-        ALERTS[:] = [dict(a, kind=a.get("kind", "earthquake")) for a in rows if not a.get("test")]   # drop old test alerts
-    except (OSError, ValueError):
-        ALERTS.clear()
+    """Read the saved alerts. First run: the old data/stores/alerts.json is copied into the database."""
+    db.import_json_once("alerts", ALERTS_PATH, lambda con, rows: _write_all(con, [a for a in rows if isinstance(a, dict)]))
+    rows = [db.loads(r["data"], {}) for r in db.query("SELECT data FROM alerts ORDER BY time DESC")]
+    ALERTS[:] = [dict(a, kind=a.get("kind", "earthquake")) for a in rows if a and not a.get("test")]   # drop old test alerts
 
 
 def _save():
-    tmp = ALERTS_PATH.with_suffix(".tmp")
-    tmp.write_text(json.dumps(ALERTS[:200], indent=1), "utf-8")
-    tmp.replace(ALERTS_PATH)
+    """Save the current list (newest 200) in one transaction."""
+    with db.tx() as con:
+        _write_all(con, ALERTS[:ALERTS_KEPT])
 
 
 def view(a):

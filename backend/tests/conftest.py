@@ -1,34 +1,44 @@
-"""Shared test setup: no network, and nothing is written to data/stores/."""
+"""Shared test setup: no network, nothing written to data/stores/, and every test gets a fresh empty database."""
 import json
+import os
 import sys
+import tempfile
 import urllib.error
 from pathlib import Path
 
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# Before the app is imported: never touch the real backend/data/lilikas.db from tests
+os.environ["DB_PATH"] = str(Path(tempfile.mkdtemp(prefix="lilikas-test-")) / "import.db")
 
 import ai_client  # noqa: E402
+import db  # noqa: E402
 import alerts  # noqa: E402
 import app as app_module  # noqa: E402
 import assist  # noqa: E402
 import centers  # noqa: E402
 import overview  # noqa: E402
 import routing  # noqa: E402
+import weather  # noqa: E402
 
 POBLACION = (13.7565, 121.0583)
 
 
 @pytest.fixture(autouse=True)
 def offline(monkeypatch, tmp_path):
+    db.use(tmp_path / "test.db")
     def no_network(url):
         raise urllib.error.URLError("offline in tests")
     monkeypatch.setattr(routing, "_http_json", no_network)
     monkeypatch.setattr(assist, "rain_last_3h", lambda lat, lon: 35.0)
     monkeypatch.setattr(assist, "place_name", lambda lat, lon: "Poblacion")
     monkeypatch.setattr(overview, "rainfall_week", lambda lat, lon: [{"date": "2026-07-20", "mm": 32.0, "kind": "observed"}])
+    def no_weather(lat, lon):
+        raise RuntimeError("Could not reach the weather service (offline in tests).")
+    monkeypatch.setattr(weather, "fetch_forecast", no_weather)
+    weather._cache.clear()
     monkeypatch.setattr(assist, "REPORTS_PATH", tmp_path / "reports.json")
-    monkeypatch.setattr(centers, "CENTERS_PATH", tmp_path / "centers.json")
     monkeypatch.setattr(alerts, "ALERTS_PATH", tmp_path / "alerts.json")
     monkeypatch.setenv("ASSIST_AI", "off")
     ai_client.CFG.reload()

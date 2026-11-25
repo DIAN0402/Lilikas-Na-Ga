@@ -31,6 +31,7 @@ from datetime import datetime, timedelta, timezone
 from flask import jsonify, request
 
 import ai_client
+import db
 import routing
 from ai_client import ModelError
 
@@ -464,19 +465,49 @@ def draft_report(text):
 
 
 # ----------------------------------------------------------------------
-# Reports from residents (kept in data/stores/reports.json; staff read them on the admin page)
+# Reports from residents (kept in the database, table `reports`; staff read them on the admin page)
 # ----------------------------------------------------------------------
-def _read_reports():
-    try:
-        return json.loads(REPORTS_PATH.read_text("utf-8"))
-    except (OSError, ValueError):
-        return []
+REPORTS_KEPT = 1000            # staff page shows the newest ones; older reports stay in the database
 
 
-def _write_reports(rows):
-    tmp = REPORTS_PATH.with_suffix(".tmp")
-    tmp.write_text(json.dumps(rows[:1000], indent=1, ensure_ascii=False), "utf-8")
-    tmp.replace(REPORTS_PATH)
+def _insert_report(con, row):
+    con.execute("INSERT INTO reports (id, client_id, created, status, data) VALUES (?, ?, ?, ?, ?) ON CONFLICT DO NOTHING",
+                (row["id"], row.get("client_id"), row["created"], row.get("status", "new"), db.dumps(row)))
+
+
+def _import_old_reports():
+    """First run: copy reports from the old data/stores/reports.json into the database."""
+    db.import_json_once("reports", REPORTS_PATH, lambda con, rows: [_insert_report(con, r) for r in rows
+                                                                   if isinstance(r, dict) and r.get("id")])
+
+
+def _report(row):
+    return row and dict(db.loads(row["data"], {}), status=row["status"])
+
+
+def find_report_by_client_id(client_id):
+    return _report(db.one("SELECT * FROM reports WHERE client_id = ?", (client_id,)))
+
+
+def save_report(row):
+    """Store a new report. Returns the report already stored under the same client_id instead, if there is one
+    (an offline retry that arrives twice is saved once)."""
+    with db.tx() as con:
+        _insert_report(con, row)
+        hit = con.execute("SELECT * FROM reports WHERE id = ? OR (client_id IS NOT NULL AND client_id = ?)",
+                          (row["id"], row.get("client_id"))).fetchone()
+    return _report(hit)
+
+
+def list_reports(limit=REPORTS_KEPT):
+    return [_report(r) for r in db.query("SELECT * FROM reports ORDER BY created DESC LIMIT ?", (limit,))]
+
+
+def set_report_status(rid, status):
+    with db.tx() as con:
+        if not con.execute("UPDATE reports SET status = ? WHERE id = ?", (status, rid)).rowcount:
+            return None
+        return _report(con.execute("SELECT * FROM reports WHERE id = ?", (rid,)).fetchone())
 
 
 def too_many(ip, limit=6, window=600):
@@ -562,6 +593,7 @@ def explain(level, facts, lang="en"):
 
 
 def init_app(app, need_admin, assess_fn, feed_fn, centers_fn):
+    _import_old_reports()
     """Register the Assist routes. The callables come from app.py so this module does not import the other modules' state."""
 
     @app.get("/api/assist/context")
@@ -620,8 +652,7 @@ def init_app(app, need_admin, assess_fn, feed_fn, centers_fn):
             return jsonify(error="That location is outside the Philippines."), 400
         client_id = str(b.get("client_id") or "")[:40] or None   # set by the browser so an offline retry is not saved twice
         if client_id:
-            with LOCK:
-                dup = next((r for r in _read_reports() if r.get("client_id") == client_id), None)
+            dup = find_report_by_client_id(client_id)
             if dup:
                 return jsonify(id=dup["id"], created=dup["created"], duplicate=True,
                                **after_report(dup, assess_fn, feed_fn, centers_fn)), 200
@@ -633,10 +664,10 @@ def init_app(app, need_admin, assess_fn, feed_fn, centers_fn):
                "life_in_danger": bool(b.get("life_in_danger")), "lat": round(lat, 5), "lon": round(lon, 5),
                "barangay": str(b.get("barangay") or "")[:80], "location_note": str(b.get("location_note") or "")[:160],
                "quote": str(b.get("quote") or "")[:500], "translation": str(b.get("translation") or "")[:900] or None, "family_contacts": clean_count(b.get("family_contacts"))}
-        with LOCK:
-            rows = _read_reports()
-            rows.insert(0, row)
-            _write_reports(rows)
+        saved = save_report(row)
+        if saved["id"] != row["id"]:              # the same offline report arrived twice at the same moment
+            return jsonify(id=saved["id"], created=saved["created"], duplicate=True,
+                           **after_report(saved, assess_fn, feed_fn, centers_fn)), 200
         return jsonify(id=row["id"], created=row["created"], **after_report(row, assess_fn, feed_fn, centers_fn)), 201
 
     @app.post("/api/assist/translate")
@@ -675,8 +706,7 @@ def init_app(app, need_admin, assess_fn, feed_fn, centers_fn):
     def api_admin_reports():
         if need_admin():
             return jsonify(error="unauthorized"), 401
-        with LOCK:
-            return jsonify(reports=_read_reports())
+        return jsonify(reports=list_reports())
 
     @app.post("/api/admin/reports/<rid>")
     def api_admin_report_status(rid):
@@ -685,11 +715,7 @@ def init_app(app, need_admin, assess_fn, feed_fn, centers_fn):
         status = (request.get_json(silent=True) or {}).get("status")
         if status not in ("new", "seen", "resolved"):
             return jsonify(error="status must be new, seen or resolved"), 400
-        with LOCK:
-            rows = _read_reports()
-            row = next((r for r in rows if r["id"] == rid), None)
-            if not row:
-                return jsonify(error="unknown report"), 404
-            row["status"] = status
-            _write_reports(rows)
+        row = set_report_status(rid, status)
+        if not row:
+            return jsonify(error="unknown report"), 404
         return jsonify(row)

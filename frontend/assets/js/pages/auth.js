@@ -9,7 +9,7 @@ $("#swap").href += "?next=" + encodeURIComponent(next);
 const err = m => { const e = $("#err"); e.hidden = !m; e.textContent = m || ""; };
 $$("[data-show]").forEach(b => b.onclick = () => { const i = b.previousElementSibling, show = i.type === "password"; i.type = show ? "text" : "password"; b.textContent = show ? "Hide" : "Show"; });
 $$("[data-soon]").forEach(b => b.onclick = () => LNG.toast(`${b.dataset.soon} sign-in is not set up yet. Use email or mobile number, or continue as a guest.`));
-const f = $("#forgot"); if (f) f.onclick = e => { e.preventDefault(); LNG.toast("Password reset needs the database and email/SMS service, which are not set up yet."); };
+const f = $("#forgot"); if (f) f.onclick = e => { e.preventDefault(); LNG.toast("Password reset needs an email/SMS service, which is not set up yet."); };
 $$("[data-lang]").forEach(b => b.onclick = () => LNG.setLang(b.dataset.lang));
 if (LNG.loc().source !== "default" && $("#barangay")) $("#barangay").value = LNG.loc().label;
 

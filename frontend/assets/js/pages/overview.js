@@ -44,7 +44,25 @@ function renderRisk(d) {
   LNG.applyI18n(el);
 }
 
-function renderRain(d) {
+// Rain classes from backend/weather.py (modelled on PAGASA rainfall intensity terms)
+const RAIN_BADGE = { none: "ok", light: "info", moderate: "info", heavy: "warn", intense: "warn", torrential: "warn" };
+
+function renderRain(d, w) {
+  // w = /api/weather (Open-Meteo: rain class, next 24 h, 7 days back + 7 ahead). Until it arrives, or if the
+  // weather service is down, the card uses the rain numbers already in /api/overview.
+  if (w && w.rain) {
+    const r = w.rain, heavy = RAIN_BADGE[r.class] === "warn";
+    const week = (w.daily || []).map(x => ({ date: x.date, mm: x.mm, kind: x.kind === "forecast" ? "forecast" : "observed" }));
+    $("#rain-body").innerHTML = `
+      <span class="badge ${RAIN_BADGE[r.class] || "info"}" style="margin-top:10px">${heavy ? icon("rain") + " " : ""}${esc(r.label)}</span>
+      <div class="big">${r.last_3h_mm}<small> mm</small></div>
+      <div class="muted serif" style="font-size:12px">over the last 3 hours${r.peak_hour_mm ? ` · heaviest hour ${r.peak_hour_mm} mm` : ""}</div>
+      <div class="muted serif" style="font-size:12px;margin-top:4px">Next 24 hours: <b>${r.next_24h_mm} mm</b> forecast</div>
+      ${chart(week)}
+      <p class="note">Rain can increase flood risk in susceptible areas. Stay alert to changing conditions.
+        <br><small>Rain data: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (model data, not rain-gauge readings). Not an official PAGASA warning.</small></p>`;
+    return;
+  }
   const mm = d.rain.last_3h_mm;
   $("#rain-body").innerHTML = `
     ${d.rain.heavy ? `<span class="badge warn" style="margin-top:10px">${icon("rain")} Heavy rain</span>` : mm ? `<span class="badge info" style="margin-top:10px">Light rain</span>` : `<span class="badge ok" style="margin-top:10px">No rain now</span>`}
@@ -81,6 +99,7 @@ async function load() {
   const my = ++seq, l = LNG.loc();
   greet();
   $("#greet-sub").textContent = `Here's your risk snapshot for ${l.label}, and the next steps you can take.`;
+  const weatherJob = api(`/api/weather?lat=${l.lat}&lon=${l.lon}`, { timeout: 20000 }).catch(() => null);   // in parallel
   let d;
   try { d = await api(`/api/overview?lat=${l.lat}&lon=${l.lon}`, { timeout: 30000 }); }
   catch (e) {
@@ -93,6 +112,7 @@ async function load() {
     $("#greet-sub").textContent = `Here's your risk snapshot for ${d.location.label}, and the next steps you can take.`;
   }
   renderRisk(d); renderRain(d); renderWhy(d); renderMap(d);
+  weatherJob.then(w => { if (my === seq && w) renderRain(d, w); });
   if (d.center) $("#pick-center").textContent = `Best match now: ${d.center.name}, about ${Math.round(d.center.minutes)} min walk. Check before travelling.`;
   if (d.alert) { $("#official-text").textContent = `${d.alert.level_label || "Advisory"}: ${d.alert.title} (${d.alert.source})`; $("#official").href = "alerts.html#" + encodeURIComponent(d.alert.id); }
   if (window.LilikasAssist) LilikasAssist.setLocation(l.lat, l.lon, l.source !== "default");

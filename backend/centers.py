@@ -1,14 +1,29 @@
-"""Evacuation centers: live capacity (simulated), admin edits, add/remove. Persists to data/stores/evacuation_centers.json."""
+"""Evacuation centers: live capacity (simulated), admin edits, add/remove. Saved in the database (table `centers`);
+data/stores/evacuation_centers.json is only the starting list copied in on the first run."""
 import json, os, random, secrets, threading, time
 from datetime import datetime
 
 from flask import jsonify, request
 from shapely.geometry import Point
 
+import db
 import hazard
 from settings import CENTERS_PATH
 
-CENTERS = json.loads(CENTERS_PATH.read_text("utf-8"))
+
+def _write_all(con, rows):
+    con.execute("DELETE FROM centers")
+    con.executemany("INSERT INTO centers (id, position, data) VALUES (?, ?, ?)",
+                    [(c["id"], i, db.dumps(c)) for i, c in enumerate(rows)])
+
+
+def load_centers():
+    """Centers from the database. First run (empty table): the starting list in evacuation_centers.json is copied in."""
+    db.import_json_once("centers", CENTERS_PATH, _write_all)
+    return [db.loads(r["data"], {}) for r in db.query("SELECT data FROM centers ORDER BY position")]
+
+
+CENTERS = load_centers()
 SIM_INTERVAL = float(os.environ.get("SIM_INTERVAL", 5))  # seconds between updates
 LOCK = threading.Lock()
 SIM = {"mode": "calm"}   # calm | storm | paused
@@ -49,11 +64,10 @@ def start():
 
 
 def save_centers():
-    """Write current numbers back to the data file so admin edits survive a restart."""
+    """Save current numbers in the database so admin edits survive a restart."""
     rows = [{**c, "occupied": LIVE[c["id"]]["occupied"], "status": LIVE[c["id"]]["status"]} for c in CENTERS]
-    tmp = CENTERS_PATH.with_suffix(".tmp")
-    tmp.write_text(json.dumps(rows, indent=1), "utf-8")
-    tmp.replace(CENTERS_PATH)
+    with db.tx() as con:
+        _write_all(con, rows)
 
 
 def snapshot():

@@ -16,6 +16,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from werkzeug.exceptions import HTTPException
 
 import ai_client
+import db
 import alerts
 import assist
 import auth
@@ -23,6 +24,7 @@ import centers
 import hazard
 import overview
 import routing
+import weather
 
 app = Flask(__name__, static_folder=None)
 app.json.sort_keys = False
@@ -74,7 +76,7 @@ def root():
 
 @app.get("/api/health")
 def api_health():
-    return jsonify(ok=True, ai=ai_client.describe(), alerts={"earthquakes": alerts.QUAKE_STATUS,
+    return jsonify(ok=True, ai=ai_client.describe(), database=db.describe()["kind"], alerts={"earthquakes": alerts.QUAKE_STATUS,
                                                              "storms": alerts.STORM_STATUS})
 
 
@@ -98,6 +100,7 @@ routing.init_app(app, centers.snapshot)                   # /api/route
 alerts.init_app(app, need_admin)                          # /api/feed, staff alert posting
 assist.init_app(app, need_admin, hazard.assess, alerts.current_feed, centers.snapshot)    # Lilikas Assist (AI)
 overview.init_app(app, hazard.assess, alerts.current_feed, centers.snapshot)             # /api/overview
+weather.init_app(app, hazard.assess, alerts.current_feed)                                 # /api/weather (Open-Meteo)
 auth.init_app(app)                                        # /api/auth/*, /api/me/preferences (in memory, no DB yet)
 
 if __name__ == "__main__":
@@ -107,5 +110,7 @@ if __name__ == "__main__":
     print("Lilikas Assist AI: " + (f"ON ({ai['model']} via {ai['base_url']})" if ai["enabled"]
                                    else "OFF, using simple rules (set AI_API_KEY in backend/.env to turn it on)"))
     print(f"Website origins allowed: {', '.join(ORIGINS)}")
+    d = db.describe()
+    print("Database: " + (f"Neon / PostgreSQL at {d['where']}" if d["kind"] == "postgresql" else f"SQLite file {d['where']}"))
     print(f"\nAPI: http://127.0.0.1:{os.environ.get('PORT', 5000)}/api/health   admin key: {ADMIN_KEY}\n")
     app.run(host=os.environ.get("HOST", "127.0.0.1"), port=int(os.environ.get("PORT", 5000)), debug=False)
